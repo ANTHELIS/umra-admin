@@ -35,10 +35,10 @@ export default function Commissions() {
     if (list) {
       setConfigs(list);
       const find = (key: string) => list.find((c) => c.key === key)?.value;
-      if (find('payment.platformFee') !== undefined) setPlatformFee(Number(find('payment.platformFee')));
-      if (find('franchise.commissionRate') !== undefined) setFranchiseRate(Number(find('franchise.commissionRate')));
-      if (find('general.referralReward') !== undefined) setReferralReward(Number(find('general.referralReward')));
-      if (find('franchise.registrationFee') !== undefined) setRegistrationFee(Number(find('franchise.registrationFee')));
+      if (find('PLATFORM_COMMISSION_PERCENTAGE') !== undefined) setPlatformFee(Number(find('PLATFORM_COMMISSION_PERCENTAGE')));
+      if (find('FRANCHISE_COMMISSION_PERCENTAGE') !== undefined) setFranchiseRate(Number(find('FRANCHISE_COMMISSION_PERCENTAGE')));
+      if (find('REFERRAL_REWARD_AMOUNT') !== undefined) setReferralReward(Number(find('REFERRAL_REWARD_AMOUNT')));
+      if (find('FRANCHISE_REGISTRATION_FEE') !== undefined) setRegistrationFee(Number(find('FRANCHISE_REGISTRATION_FEE')));
     } else {
       setError(res?.error ?? 'Failed to load config');
     }
@@ -50,10 +50,10 @@ export default function Commissions() {
   const handleSaveConfigs = async () => {
     setSaving(true);
     const updates = [
-      { key: 'payment.platformFee', value: platformFee, group: 'payment' as const },
-      { key: 'franchise.commissionRate', value: franchiseRate, group: 'franchise' as const },
-      { key: 'general.referralReward', value: referralReward, group: 'general' as const },
-      { key: 'franchise.registrationFee', value: registrationFee, group: 'franchise' as const },
+      { key: 'PLATFORM_COMMISSION_PERCENTAGE', value: platformFee, description: 'Default platform commission on each booking (percentage)', group: 'general' as const },
+      { key: 'FRANCHISE_COMMISSION_PERCENTAGE', value: franchiseRate, description: 'Default franchise commission on each booking (percentage)', group: 'franchise' as const },
+      { key: 'REFERRAL_REWARD_AMOUNT', value: referralReward, description: 'Reward amount for successful referrals', group: 'general' as const },
+      { key: 'FRANCHISE_REGISTRATION_FEE', value: registrationFee, description: 'One-time onboarding fee for franchises', group: 'franchise' as const },
     ];
     let allOk = true;
     for (const upd of updates) {

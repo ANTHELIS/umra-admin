@@ -47,6 +47,12 @@ const NAV_GROUPS = [
       { name: "Promotions & Coupons", href: "/promotions",    icon: Tag },
       { name: "Notifications",        href: "/notifications", icon: Bell }
     ]
+  },
+  {
+    label: "FINANCE",
+    items: [
+      { name: "Commission Config", href: "/commissions", icon: Percent }
+    ]
   }
 ];
 
@@ -64,8 +70,7 @@ const SUPER_ADMIN_GROUPS = [
     items: [
       { name: "Revenue & Reports",       href: "/reports",          icon: BarChart3 },
       { name: "Payment Gateways",        href: "/payment-gateways", icon: CreditCard },
-      { name: "Payment Settlements",     href: "/settlements",      icon: Landmark },
-      { name: "Commission Config",       href: "/commissions",      icon: Percent }
+      { name: "Payment Settlements",     href: "/settlements",      icon: Landmark }
     ]
   },
   {
@@ -106,10 +111,18 @@ export default function Sidebar() {
     } catch {}
   }, []);
 
-  const isSuperAdmin     = userRole === 'super_admin';
-  const activeNavGroups  = isSuperAdmin
-    ? [...NAV_GROUPS, ...SUPER_ADMIN_GROUPS]
-    : NAV_GROUPS;
+  const isSuperAdmin = userRole === 'super_admin';
+  const rawGroups = isSuperAdmin ? [...NAV_GROUPS, ...SUPER_ADMIN_GROUPS] : NAV_GROUPS;
+
+  const activeNavGroups = rawGroups.reduce((acc, curr) => {
+    const existing = acc.find(g => g.label === curr.label);
+    if (existing) {
+      existing.items.push(...curr.items);
+    } else {
+      acc.push({ ...curr, items: [...curr.items] });
+    }
+    return acc;
+  }, [] as typeof rawGroups);
 
   const handleLogout = () => {
     clearToken();
