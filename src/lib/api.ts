@@ -1,5 +1,5 @@
 // ============================================================
-// UMRAH TRAVEL — API SERVICE LAYER
+// UMRAH TRAVEL — API SERVICE LAYER  (v2 — verified against Postman)
 // Base URL from env variable; falls back to production URL.
 // ============================================================
 
@@ -8,27 +8,25 @@ export const BASE_URL =
 
 const HEALTH_URL = 'https://umrah-be.onrender.com/health';
 
-// ------ Token management (localStorage, SSR-safe) ----------
+// ---- Token management (localStorage, SSR-safe) ----
 export const getToken = (): string | null => {
   if (typeof window === 'undefined') return null;
-  // Auto-seed from env if nothing stored yet (useful in dev)
   const stored = localStorage.getItem('umrah_token');
+  // Auto-seed from env if nothing stored yet (dev convenience)
   if (!stored && process.env.NEXT_PUBLIC_ADMIN_TOKEN) {
     localStorage.setItem('umrah_token', process.env.NEXT_PUBLIC_ADMIN_TOKEN);
     return process.env.NEXT_PUBLIC_ADMIN_TOKEN;
   }
   return stored;
 };
-
 export const setToken = (token: string) => {
   if (typeof window !== 'undefined') localStorage.setItem('umrah_token', token);
 };
-
 export const clearToken = () => {
   if (typeof window !== 'undefined') localStorage.removeItem('umrah_token');
 };
 
-// ------ Toast helper (non-blocking, no external deps) -------
+// ---- Toast (zero-dependency) ----
 export const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'info') => {
   if (typeof window === 'undefined') return;
   const el = document.createElement('div');
@@ -45,23 +43,20 @@ export const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'inf
   setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3500);
 };
 
-// ------ Central fetch wrapper --------------------------------
+// ---- Central fetch wrapper ----
 type FetchOptions = RequestInit & { isFormData?: boolean };
 
 export const fetchApi = async (endpoint: string, options: FetchOptions = {}) => {
   const { isFormData, ...fetchOptions } = options;
   const token = getToken();
 
-  // Build headers — never set Content-Type for FormData
   const headers: Record<string, string> = {};
   if (!isFormData) headers['Content-Type'] = 'application/json';
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  // Allow caller to override individual headers
   Object.assign(headers, fetchOptions.headers ?? {});
 
-  // Slow-server guard: emit console note after 10 s
+  // Slow-server guard — Render.com free tier wakes up in ~30s
   let slowTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
-    console.info('[API] Server is warming up, please wait...');
     showToast('Server is warming up, please wait…', 'info');
   }, 10_000);
 
@@ -69,15 +64,12 @@ export const fetchApi = async (endpoint: string, options: FetchOptions = {}) => 
     const res = await fetch(`${BASE_URL}${endpoint}`, { ...fetchOptions, headers });
     if (slowTimer) { clearTimeout(slowTimer); slowTimer = null; }
 
-    // Handle 401 → logout
     if (res.status === 401) {
       clearToken();
       showToast('Session expired. Please log in again.', 'error');
       if (typeof window !== 'undefined') window.location.href = '/login';
       return { data: null, error: 'Unauthorized' };
     }
-
-    // Handle other HTTP errors with friendly toasts
     if (!res.ok) {
       const errBody = await res.json().catch(() => ({}));
       const msg: string = errBody?.message ?? `HTTP ${res.status}`;
@@ -88,10 +80,8 @@ export const fetchApi = async (endpoint: string, options: FetchOptions = {}) => 
       return { data: null, error: msg };
     }
 
-    // Empty body (204 No Content etc.)
     const text = await res.text();
-    const data = text ? JSON.parse(text) : {};
-    return data;
+    return text ? JSON.parse(text) : {};
   } catch (err: any) {
     if (slowTimer) { clearTimeout(slowTimer); slowTimer = null; }
     console.warn(`[API Network Error] ${endpoint}:`, err.message);
@@ -101,44 +91,98 @@ export const fetchApi = async (endpoint: string, options: FetchOptions = {}) => 
 };
 
 // ============================================================
+// ENUM TYPES  (verified from Postman collection + user spec)
+// ============================================================
+
+export type BannerPlacement = 'home_top' | 'home_middle' | 'package_list' | 'saving_dashboard';
+
+export type DiscountType = 'percentage' | 'fixed';
+
+export type ConfigGroup = 'franchise' | 'general' | 'payment' | 'saving';
+
+/** category field for POST /admin/notifications/push */
+export type NotificationCategory = 'system' | 'promotion' | 'booking' | 'payment' | 'general';
+
+/** event field for POST /admin/notifications/push */
+export type NotificationEvent =
+  | 'booking_created'
+  | 'booking_cancelled'
+  | 'payment_success'
+  | 'payment_failed';
+
+/** role field for PATCH /super-admin/users/:id/role */
+export type UserRole = 'user' | 'franchise' | 'admin' | 'super_admin';
+
+export type FranchiseStatus = 'active' | 'suspended';
+
+// ============================================================
 // ADMIN ENDPOINTS  (role: admin)
 // ============================================================
 
 export const adminApi = {
-  // --- Banners ---
+  // ── Auth (admin login — no auth header needed) ────────────
+  login: (email: string, password: string) =>
+    fetchApi('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    }),
+
+  // ── Banners ───────────────────────────────────────────────
   getBanners: () =>
     fetchApi('/admin/banners'),
 
-  // formData MUST be a FormData instance with 'image' as a File
+  /**
+   * POST /admin/banners — multipart/form-data
+   * Pass a FormData instance; do NOT set Content-Type manually.
+   * Required fields: title, link, placement, isActive, validFrom, validTo, image (File)
+   */
   createBanner: (formData: FormData) =>
     fetchApi('/admin/banners', { method: 'POST', body: formData, isFormData: true }),
 
-  // --- Offers / Coupons ---
+  // ── Offers / Coupons ──────────────────────────────────────
   getOffers: () =>
     fetchApi('/admin/offers'),
 
   createOffer: (data: {
-    code: string; title: string; description: string;
-    discountType: 'percentage' | 'fixed'; discountValue: number;
-    minPurchaseAmount: number; maxDiscountAmount: number;
-    validFrom: string; validTo: string;
-    usageLimit: number; perUserLimit: number;
-    isActive: boolean; applicablePackages?: string[];
+    code: string;
+    title: string;
+    description: string;
+    discountType: DiscountType;
+    discountValue: number;
+    minPurchaseAmount: number;
+    maxDiscountAmount: number;
+    validFrom: string;          // ISO 8601
+    validTo: string;            // ISO 8601
+    usageLimit: number;
+    perUserLimit: number;
+    isActive: boolean;
+    applicablePackages?: string[];
   }) => fetchApi('/admin/offers', { method: 'POST', body: JSON.stringify(data) }),
 
-  // --- System Config ---
+  // ── System Config ─────────────────────────────────────────
   getConfig: () =>
     fetchApi('/admin/config'),
 
   upsertConfig: (data: {
-    key: string; value: unknown; description?: string;
-    group: 'franchise' | 'general' | 'payment' | 'saving';
+    key: string;
+    value: unknown;
+    description?: string;
+    group: ConfigGroup;
   }) => fetchApi('/admin/config', { method: 'POST', body: JSON.stringify(data) }),
 
-  // --- Push Notifications ---
+  // ── Push Notifications ────────────────────────────────────
+  /**
+   * POST /admin/notifications/push
+   * Fields verified from Postman: userId, title, message, category, event, data{}
+   * NOTE: the field is 'category' + 'event' — NOT 'type'
+   */
   sendPushNotification: (data: {
-    userId: string; title: string; message: string;
-    type: string; data?: Record<string, unknown>;
+    userId: string;
+    title: string;
+    message: string;
+    category: NotificationCategory;
+    event: NotificationEvent;
+    data?: Record<string, unknown>;
   }) => fetchApi('/admin/notifications/push', { method: 'POST', body: JSON.stringify(data) }),
 };
 
@@ -147,33 +191,60 @@ export const adminApi = {
 // ============================================================
 
 export const superAdminApi = {
-  // --- Admin accounts ---
+  // ── Auth (super admin login) ──────────────────────────────
+  login: (email: string, password: string) =>
+    fetchApi('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    }),
+
+  // ── Admin accounts ────────────────────────────────────────
   createAdmin: (data: {
-    firstName: string; lastName: string;
-    email: string; phone: string; password: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    password: string;
   }) => fetchApi('/super-admin/admins', { method: 'POST', body: JSON.stringify(data) }),
 
-  // --- User roles ---
-  updateUserRole: (id: string, role: 'user' | 'admin' | 'super_admin' | 'franchise') =>
-    fetchApi(`/super-admin/users/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role }) }),
+  // ── User roles ────────────────────────────────────────────
+  /**
+   * PATCH /super-admin/users/:id/role
+   * role enum: 'user' | 'franchise' | 'admin' | 'super_admin'
+   *
+   * Admin     = internal system operator (manages users, bookings, payments)
+   * Franchise = external business partner (brings customers, earns commission)
+   */
+  updateUserRole: (id: string, role: UserRole) =>
+    fetchApi(`/super-admin/users/${id}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    }),
 
-  // --- Franchise management ---
+  // ── Franchise management ──────────────────────────────────
   getFranchises: () =>
     fetchApi('/super-admin/franchises'),
 
   approveFranchise: (id: string) =>
     fetchApi(`/super-admin/franchises/${id}/approve`, { method: 'PATCH', body: '{}' }),
 
-  updateFranchiseStatus: (id: string, status: 'active' | 'suspended') =>
-    fetchApi(`/super-admin/franchises/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  updateFranchiseStatus: (id: string, status: FranchiseStatus) =>
+    fetchApi(`/super-admin/franchises/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
 
-  // --- Analytics ---
+  // ── Analytics ─────────────────────────────────────────────
+  /**
+   * GET /super-admin/analytics
+   * Response: { status, data: { totalUsers, totalBookings, totalFranchises, totalRevenue } }
+   */
   getAnalytics: () =>
     fetchApi('/super-admin/analytics'),
 };
 
 // ============================================================
-// HEALTH CHECK  (no auth)
+// HEALTH CHECK  (no auth required)
 // ============================================================
 
 export const checkHealth = async (): Promise<'live' | 'issue'> => {
@@ -190,7 +261,7 @@ export const checkHealth = async (): Promise<'live' | 'issue'> => {
 // UTILITIES
 // ============================================================
 
-/** Format a number as Indian Rupee: 1250000 → ₹12,50,000 */
+/** Format as Indian Rupee: 1250000 → ₹12,50,000 */
 export const formatINR = (value: number): string =>
   `₹${value.toLocaleString('en-IN')}`;
 

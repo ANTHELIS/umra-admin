@@ -3,34 +3,45 @@
 import React, { useState } from 'react';
 import styles from './page.module.css';
 import { Send, Smartphone, Mail, Bell, CheckCircle2, RefreshCw } from 'lucide-react';
-import { adminApi, showToast } from '@/lib/api';
+import { adminApi, showToast, type NotificationCategory, type NotificationEvent } from '@/lib/api';
 
-const NOTIFICATION_TYPES = [
-  { value: 'broadcast', label: 'Broadcast' },
-  { value: 'booking_update', label: 'Booking Update' },
-  { value: 'payment', label: 'Payment Alert' },
+// Verified enums from Postman collection
+const CATEGORIES: { value: NotificationCategory; label: string }[] = [
+  { value: 'system',    label: 'System' },
   { value: 'promotion', label: 'Promotion' },
-  { value: 'system', label: 'System Alert' },
+  { value: 'booking',   label: 'Booking' },
+  { value: 'payment',   label: 'Payment' },
+  { value: 'general',   label: 'General' },
+];
+
+const EVENTS: { value: NotificationEvent; label: string }[] = [
+  { value: 'booking_created',   label: 'Booking Created' },
+  { value: 'booking_cancelled', label: 'Booking Cancelled' },
+  { value: 'payment_success',   label: 'Payment Success' },
+  { value: 'payment_failed',    label: 'Payment Failed' },
 ];
 
 export default function Notifications() {
-  const [title, setTitle] = useState('Eid Al-Adha Special');
-  const [message, setMessage] = useState("Book your Umrah package before 10th Dhul Hijjah and get 15% off. Use code: EID15");
-  const [channel, setChannel] = useState('In-App');
-  const [userId, setUserId] = useState('');
-  const [notifType, setNotifType] = useState('broadcast');
-  const [sending, setSending] = useState(false);
+  const [title,    setTitle]    = useState('Payment Received');
+  const [message,  setMessage]  = useState('Your payment was successful');
+  const [channel,  setChannel]  = useState('In-App');
+  const [userId,   setUserId]   = useState('');
+  const [category, setCategory] = useState<NotificationCategory>('payment');
+  const [event,    setEvent]    = useState<NotificationEvent>('payment_success');
+  const [sending,  setSending]  = useState(false);
 
   const handleSend = async () => {
-    if (!userId.trim()) { showToast('Please enter a Target User ID.', 'error'); return; }
-    if (!title.trim() || !message.trim()) { showToast('Title and message are required.', 'error'); return; }
+    if (!userId.trim())           { showToast('Please enter a Target User ID.', 'error'); return; }
+    if (!title.trim())            { showToast('Title is required.', 'error'); return; }
+    if (!message.trim())          { showToast('Message body is required.', 'error'); return; }
 
     setSending(true);
     const res = await adminApi.sendPushNotification({
-      userId: userId.trim(),
-      title: title.trim(),
-      message: message.trim(),
-      type: notifType,
+      userId:   userId.trim(),
+      title:    title.trim(),
+      message:  message.trim(),
+      category,
+      event,
       data: { channel },
     });
     setSending(false);
@@ -49,13 +60,14 @@ export default function Notifications() {
         <div className="card">
           <div className="page-title" style={{ marginBottom: '24px' }}>Compose Broadcast</div>
 
+          {/* Channel selector */}
           <div className={styles.formGroup}>
             <label className={styles.label}>Select Channel</label>
             <div className={styles.channelOptions}>
               {[
-                { name: 'In-App', Icon: Bell, desc: 'Push to mobile app' },
-                { name: 'SMS', Icon: Smartphone, desc: 'Direct to phone' },
-                { name: 'Email', Icon: Mail, desc: 'Newsletter format' },
+                { name: 'In-App', Icon: Bell,        desc: 'Push to mobile app' },
+                { name: 'SMS',    Icon: Smartphone,  desc: 'Direct to phone' },
+                { name: 'Email',  Icon: Mail,         desc: 'Newsletter format' },
               ].map(({ name, Icon, desc }) => (
                 <div
                   key={name}
@@ -75,8 +87,11 @@ export default function Notifications() {
             </div>
           </div>
 
+          {/* Target User ID */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>Target User ID <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+            <label className={styles.label}>
+              Target User ID <span style={{ color: 'var(--color-danger)' }}>*</span>
+            </label>
             <input
               type="text"
               className="input-field"
@@ -86,17 +101,43 @@ export default function Notifications() {
             />
           </div>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Notification Type</label>
-            <select className="input-field" value={notifType} onChange={(e) => setNotifType(e.target.value)}>
-              {NOTIFICATION_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
+          {/* Category + Event — two columns */}
+          <div className={styles.formGroup} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label className={styles.label}>
+                Category <span style={{ color: 'var(--color-danger)' }}>*</span>
+              </label>
+              <select
+                className="input-field"
+                value={category}
+                onChange={(e) => setCategory(e.target.value as NotificationCategory)}
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={styles.label}>
+                Event <span style={{ color: 'var(--color-danger)' }}>*</span>
+              </label>
+              <select
+                className="input-field"
+                value={event}
+                onChange={(e) => setEvent(e.target.value as NotificationEvent)}
+              >
+                {EVENTS.map((ev) => (
+                  <option key={ev.value} value={ev.value}>{ev.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
+          {/* Title */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>Title / Subject <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+            <label className={styles.label}>
+              Title <span style={{ color: 'var(--color-danger)' }}>*</span>
+            </label>
             <input
               type="text"
               className="input-field"
@@ -105,10 +146,14 @@ export default function Notifications() {
             />
           </div>
 
+          {/* Message */}
           <div className={styles.formGroup}>
             <label className={styles.label} style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Message Body <span style={{ color: 'var(--color-danger)' }}>*</span></span>
-              <span className={styles.charCount} style={{ color: message.length > 160 ? 'var(--color-danger)' : undefined }}>
+              <span>Message <span style={{ color: 'var(--color-danger)' }}>*</span></span>
+              <span
+                className={styles.charCount}
+                style={{ color: message.length > 160 ? 'var(--color-danger)' : undefined }}
+              >
                 {message.length}/160
               </span>
             </label>
@@ -128,7 +173,7 @@ export default function Notifications() {
           >
             {sending
               ? <><RefreshCw size={18} style={{ animation: 'spin 1s linear infinite' }} /> Sending…</>
-              : <><Send size={18} /> Send Broadcast Now</>
+              : <><Send size={18} /> Send Notification</>
             }
           </button>
         </div>
@@ -144,9 +189,18 @@ export default function Notifications() {
               </div>
               <div className={styles.previewBubble}>
                 <div className={styles.previewSender}>Umrah Travel</div>
-                {title && <div style={{ fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>{title}</div>}
-                <div className={styles.previewText}>{message || 'Start typing to see preview…'}</div>
-                <div className={styles.previewTime}>Just now</div>
+                {title && (
+                  <div style={{ fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>{title}</div>
+                )}
+                <div className={styles.previewText}>
+                  {message || 'Start typing to see preview…'}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
+                  <span style={{ fontSize: '10px', opacity: 0.5, textTransform: 'capitalize' }}>
+                    {category} · {event.replace(/_/g, ' ')}
+                  </span>
+                  <span className={styles.previewTime}>Just now</span>
+                </div>
               </div>
             </div>
           </div>

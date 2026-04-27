@@ -1,11 +1,82 @@
-import React from 'react';
-import Link from 'next/link';
+"use client";
+
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import { Mail, Lock, EyeOff, Lock as LockIcon } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { adminApi, setToken, showToast } from '@/lib/api';
+
+const ALLOWED_ROLES = ['admin', 'super_admin'];
 
 export default function SignIn() {
+  const router = useRouter();
+  const [email, setEmail]         = useState('');
+  const [password, setPassword]   = useState('');
+  const [showPass, setShowPass]   = useState(false);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState<string | null>(null);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!email.trim() || !password.trim()) {
+      setError('Email and password are required.');
+      return;
+    }
+
+    setLoading(true);
+    const res = await adminApi.login(email.trim(), password);
+    setLoading(false);
+
+    // Network / server error
+    if (res?.error || res?.status === 'error') {
+      setError(res?.message ?? res?.error ?? 'Login failed. Please try again.');
+      return;
+    }
+
+    // Extract data from { status: 'success', message: '...', data: { user, tokens } }
+    const user   = res?.data?.user   ?? res?.user;
+    const tokens = res?.data?.tokens ?? res?.tokens;
+
+    if (!user || !tokens?.accessToken) {
+      setError('Unexpected response from server. Please try again.');
+      return;
+    }
+
+    const role: string = user.role ?? '';
+
+    // Block non-admin roles
+    if (!ALLOWED_ROLES.includes(role)) {
+      setError(
+        role === 'franchise'
+          ? 'Franchise partners do not have access to the Admin Panel. Please use the Franchise Portal.'
+          : 'Your account does not have admin access. Contact your Super Admin.'
+      );
+      return;
+    }
+
+    // Persist token + user info
+    setToken(tokens.accessToken);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('umrah_user', JSON.stringify({
+        id:        user.id ?? user._id,
+        firstName: user.firstName,
+        lastName:  user.lastName,
+        email:     user.email,
+        role:      user.role,
+        fullName:  user.fullName ?? `${user.firstName} ${user.lastName}`,
+      }));
+      localStorage.setItem('umrah_role', role);
+    }
+
+    showToast(`Welcome back, ${user.firstName}! 🌙`, 'success');
+    router.replace('/');
+  };
+
   return (
     <div className={styles.authCard}>
+      {/* Header */}
       <div className={styles.cardHeader}>
         <div className={styles.logoMini}>
           <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
@@ -13,51 +84,99 @@ export default function SignIn() {
           </svg>
         </div>
         <h2 className={styles.title}>Umrah Travel</h2>
-        <span className={styles.subtitle}>Admin Panel</span>
+        <span className={styles.subtitle}>Admin &amp; Super Admin Panel</span>
       </div>
 
-      <div className={styles.tabSwitcher}>
-        <Link href="/auth/signin" className={styles.tabActive}>Sign In</Link>
-        <Link href="/auth/signup" className={styles.tab}>Sign Up</Link>
-      </div>
+      {/* Form */}
+      <form className={styles.form} onSubmit={handleLogin} noValidate>
 
-      <form className={styles.form}>
         <div className={styles.inputGroup}>
-          <label className={styles.label}>Email Address</label>
+          <label className={styles.label} htmlFor="email">Email Address</label>
           <div className={styles.inputWrapper}>
             <Mail size={18} className={styles.inputIcon} />
-            <input type="email" placeholder="admin@umrahtravel.com" className={styles.input} />
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              placeholder="admin@umrahtravel.com"
+              className={styles.input}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+            />
           </div>
         </div>
 
         <div className={styles.inputGroup}>
           <div className={styles.labelRow}>
-            <label className={styles.label}>Password</label>
-            <Link href="#" className={styles.forgotLink}>Forgot password?</Link>
+            <label className={styles.label} htmlFor="password">Password</label>
           </div>
           <div className={styles.inputWrapper}>
             <Lock size={18} className={styles.inputIcon} />
-            <input type="password" placeholder="Enter password" className={styles.input} />
-            <EyeOff size={18} className={styles.inputIconRight} />
+            <input
+              id="password"
+              type={showPass ? 'text' : 'password'}
+              autoComplete="current-password"
+              placeholder="Enter password"
+              className={styles.input}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPass((p) => !p)}
+              className={styles.inputIconRight}
+              tabIndex={-1}
+              aria-label="Toggle password visibility"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              {showPass ? <Eye size={18} /> : <EyeOff size={18} />}
+            </button>
           </div>
         </div>
 
-        <div className={styles.rememberRow}>
-          <label className={styles.checkboxLabel}>
-            <div className={styles.checkboxChecked}>✓</div>
-            <span className={styles.rememberText}>Remember this device</span>
-          </label>
-        </div>
+        {/* Error message */}
+        {error && (
+          <div style={{
+            background: 'rgba(122,26,26,0.3)',
+            border: '1px solid rgba(255,68,68,0.4)',
+            borderRadius: '10px',
+            padding: '12px 16px',
+            fontSize: '13px',
+            color: '#FF8080',
+            lineHeight: 1.5,
+          }}>
+            {error}
+          </div>
+        )}
 
-        <Link href="/auth/otp" style={{ width: '100%' }}>
-          <button type="button" className={styles.submitBtn}>Sign In →</button>
-        </Link>
+        <button
+          type="submit"
+          className={styles.submitBtn}
+          disabled={loading}
+          style={{ opacity: loading ? 0.7 : 1 }}
+        >
+          {loading ? 'Signing in…' : 'Sign In →'}
+        </button>
       </form>
 
       <div className={styles.divider} />
 
+      {/* Role info pills */}
+      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '16px' }}>
+        {[
+          { role: 'Admin',       color: '#2DB966', bg: 'rgba(45,185,102,0.1)' },
+          { role: 'Super Admin', color: '#C9A84C', bg: 'rgba(201,168,76,0.1)' },
+        ].map(({ role, color, bg }) => (
+          <span key={role} style={{ fontSize: '11px', fontWeight: 600, color, background: bg, border: `1px solid ${color}44`, borderRadius: '50px', padding: '3px 10px' }}>
+            {role}
+          </span>
+        ))}
+      </div>
+
       <div className={styles.cardFooter}>
-        <LockIcon size={12} className="gold-text" />
+        <Lock size={12} className="gold-text" />
         <span className={styles.secureText}>Secured with SSL Encryption</span>
       </div>
     </div>
