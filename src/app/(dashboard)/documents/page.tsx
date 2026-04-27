@@ -34,6 +34,7 @@ const INITIAL_DOCS = [
 export default function DocumentVerification() {
   const [documents, setDocuments] = useState(INITIAL_DOCS);
   const [activeTab, setActiveTab] = useState("Pending");
+  const [pendingRejectId, setPendingRejectId] = useState<number | null>(null);
 
   const handleApprove = (id: number) => {
     setDocuments(documents.filter(doc => doc.id !== id));
@@ -41,9 +42,13 @@ export default function DocumentVerification() {
   };
 
   const handleReject = (id: number) => {
-    if (window.confirm("Are you sure you want to reject this document?")) {
-      setDocuments(documents.filter(doc => doc.id !== id));
-    }
+    setPendingRejectId(id); // BUG 8 FIX: was window.confirm
+  };
+
+  const confirmReject = () => {
+    if (pendingRejectId === null) return;
+    setDocuments(documents.filter(doc => doc.id !== pendingRejectId));
+    setPendingRejectId(null);
   };
 
   return (
@@ -145,6 +150,22 @@ export default function DocumentVerification() {
           </div>
         </div>
       </div>
+
+      {/* BUG 8 FIX — Reject Confirmation Modal */}
+      {pendingRejectId !== null && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div className="card" style={{ width: '360px', border: '1px solid var(--color-danger)', textAlign: 'center' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Reject Document?</h3>
+            <p className="muted-text" style={{ fontSize: '13px', marginBottom: '24px' }}>
+              This document will be marked as rejected. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setPendingRejectId(null)}>Cancel</button>
+              <button className="btn-primary" style={{ flex: 1, background: 'var(--color-danger)' }} onClick={confirmReject}>Reject Document</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

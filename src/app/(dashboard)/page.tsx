@@ -13,29 +13,44 @@ type Stats = {
 };
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [stats,    setStats]    = useState<Stats | null>(null);
+  const [loading,  setLoading]  = useState(true);
+  const [error,    setError]    = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>('admin');
   const abortRef = useRef<AbortController | null>(null);
 
+  // BUG 10 FIX — read role from localStorage before fetching analytics
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const role = localStorage.getItem('umrah_role') ?? 'admin';
+      setUserRole(role);
+    }
+  }, []);
+
   const fetchStats = useCallback(async () => {
-    // Abort any in-flight request
     if (abortRef.current) abortRef.current.abort();
     abortRef.current = new AbortController();
+
+    // Only super_admin can call GET /super-admin/analytics
+    // Regular admin calling it will get 403 — so skip the call entirely
+    const role = typeof window !== 'undefined' ? localStorage.getItem('umrah_role') : null;
+    if (role !== 'super_admin') {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     const res = await superAdminApi.getAnalytics();
 
-    // If data is at top level OR inside a .data wrapper
     const d = res?.data ?? res;
     if (d && typeof d.totalUsers !== 'undefined') {
       setStats({
-        totalUsers: Number(d.totalUsers) || 0,
-        totalBookings: Number(d.totalBookings) || 0,
-        totalFranchises: Number(d.totalFranchises) || 0,
-        totalRevenue: Number(d.totalRevenue) || 0,
+        totalUsers:     Number(d.totalUsers)     || 0,
+        totalBookings:  Number(d.totalBookings)  || 0,
+        totalFranchises:Number(d.totalFranchises)|| 0,
+        totalRevenue:   Number(d.totalRevenue)   || 0,
       });
     } else {
       setError(res?.error ?? 'Failed to load analytics');
@@ -47,6 +62,19 @@ export default function Dashboard() {
     fetchStats();
     return () => abortRef.current?.abort();
   }, [fetchStats]);
+
+  // Build welcome name from localStorage
+  const welcomeName = (() => {
+    if (typeof window === 'undefined') return 'Admin';
+    try {
+      const raw = localStorage.getItem('umrah_user');
+      if (raw) { 
+        const u = JSON.parse(raw); 
+        return u.name || u.fullName || `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Admin'; 
+      }
+    } catch {}
+    return 'Admin';
+  })();
 
   const kpis = stats
     ? [
@@ -64,7 +92,7 @@ export default function Dashboard() {
         <div className={styles.welcomePattern} />
         <div className={styles.welcomeContent}>
           <div className={styles.welcomeLeft}>
-            <h2>Assalamu Alaikum, Admin 🌙</h2>
+            <h2>Assalamu Alaikum, {welcomeName} 🌙</h2>
             <p>Here&apos;s what&apos;s happening with your platform today.</p>
           </div>
           <div className={styles.welcomeRight}>
@@ -94,6 +122,14 @@ export default function Dashboard() {
             <button className="btn-primary" style={{ gap: '8px' }} onClick={fetchStats}>
               <RefreshCw size={16} /> Retry
             </button>
+          </div>
+        )}
+
+        {/* BUG 10 FIX — admin role cannot call /super-admin/analytics (would 403) */}
+        {!stats && !loading && !error && (
+          <div className="card" style={{ gridColumn: '1/-1', textAlign: 'center', padding: '32px' }}>
+            <p className="muted-text">Analytics dashboard is available to Super Admins only.</p>
+            <p className="muted-text" style={{ fontSize: '12px', marginTop: '8px' }}>Contact your Super Admin for platform-wide insights.</p>
           </div>
         )}
 

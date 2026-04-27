@@ -42,7 +42,7 @@ export default function Notifications() {
       message:  message.trim(),
       category,
       event,
-      data: { channel },
+      // NOTE: 'channel' is a UI preview toggle only — not sent to backend (BUG 11 fix)
     });
     setSending(false);
 

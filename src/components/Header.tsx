@@ -49,7 +49,8 @@ export default function Header() {
         const raw = localStorage.getItem('umrah_user');
         if (raw) {
           const user = JSON.parse(raw);
-          setUserName(user.firstName ?? user.fullName ?? 'Admin');
+          const parsedName = user.name || user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Admin';
+          setUserName(parsedName);
           setUserRole(user.role ?? '');
         }
       } catch {}
@@ -85,8 +86,10 @@ export default function Header() {
     router.replace('/auth/signin');
   };
 
-  const route      = Object.entries(ROUTE_MAP).find(([key]) => pathname.includes(key));
-  const title      = route?.[1].title      ?? 'Dashboard';
+  const route = Object.entries(ROUTE_MAP).find(([key]) =>
+    key === '/' ? pathname === '/' : pathname.startsWith(key)
+  );
+  const title       = route?.[1].title       ?? 'Dashboard';
   const breadcrumbs = route?.[1].breadcrumbs ?? 'Admin / Dashboard';
 
   return (

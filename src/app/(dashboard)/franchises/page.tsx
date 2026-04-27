@@ -34,6 +34,7 @@ export default function FranchiseManagement() {
   }, []);
 
   useEffect(() => {
+    mountedRef.current = true;
     fetchFranchises();
     return () => { mountedRef.current = false; };
   }, [fetchFranchises]);

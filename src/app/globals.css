@@ -104,6 +104,30 @@ input, textarea, select {
   color: var(--color-muted);
 }
 
+/* BUG 4 FIX — missing color utility classes */
+.success-text {
+  color: var(--color-success);
+}
+
+.warning-text {
+  color: var(--color-warning);
+}
+
+.danger-text {
+  color: var(--color-danger);
+}
+
+/* BUG 15 FIX — missing keyframe animations used across components */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
 /* Standard Components */
 .card {
   background-color: var(--bg-card);

@@ -15,15 +15,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     const token = getToken();
-    const role  = typeof window !== 'undefined' ? localStorage.getItem('umrah_role') : null;
 
     if (!token) {
       router.replace('/auth/signin');
       return;
     }
 
+    // BUG 14 FIX — try umrah_role first, fall back to parsing umrah_user JSON
+    let role = typeof window !== 'undefined' ? localStorage.getItem('umrah_role') : null;
+    if (!role && typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('umrah_user');
+        if (raw) {
+          const user = JSON.parse(raw);
+          role = user.role ?? null;
+          // Backfill the missing key for future checks
+          if (role) localStorage.setItem('umrah_role', role);
+        }
+      } catch {}
+    }
+
     if (role && !ALLOWED_ROLES.includes(role)) {
-      // Token exists but role is not allowed (franchise/user somehow got here)
       router.replace('/auth/signin');
       return;
     }

@@ -149,14 +149,14 @@ export default function AdminManagement() {
                 <td>
                   <select
                     className="input-field"
-                    style={{ padding: '4px 8px', height: '32px', width: '130px' }}
+                    style={{ padding: '4px 8px', height: '32px', width: '160px' }}
                     value={admin.role}
                     onChange={(e) => setPendingRoleChange({ id: admin.id, role: e.target.value })}
                   >
                     <option value="admin">Admin</option>
                     <option value="super_admin">Super Admin</option>
                     <option value="user">User</option>
-                    <option value="franchise">Franchise</option>
+                    <option value="franchise">Franchise (External Partner)</option>
                   </select>
                 </td>
               </tr>
@@ -215,10 +215,17 @@ export default function AdminManagement() {
           <div className="card" style={{ width: '380px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-gold)', textAlign: 'center' }}>
             <ShieldAlert size={32} style={{ color: 'var(--color-warning)', margin: '0 auto 16px' }} />
             <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Confirm Role Change</h3>
-            <p className="muted-text" style={{ fontSize: '13px', marginBottom: '24px' }}>
+            <p className="muted-text" style={{ fontSize: '13px', marginBottom: '16px' }}>
               Change role to <strong style={{ color: 'var(--color-gold)' }}>{ROLE_LABELS[pendingRoleChange.role]}</strong>?<br />
               This will immediately affect access permissions.
             </p>
+            {/* BUG 6 FIX — warn when downgrading to non-admin role */}
+            {(pendingRoleChange.role === 'franchise' || pendingRoleChange.role === 'user') && (
+              <p style={{ color: 'var(--color-danger)', fontSize: '12px', marginBottom: '16px', background: 'rgba(229,57,53,0.1)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(229,57,53,0.3)' }}>
+                ⚠ This will <strong>remove admin panel access</strong> from this account.
+                {pendingRoleChange.role === 'franchise' && ' Franchise is an external business partner role.'}
+              </p>
+            )}
             <div style={{ display: 'flex', gap: '12px' }}>
               <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setPendingRoleChange(null)} disabled={roleChanging}>Cancel</button>
               <button className="btn-primary" style={{ flex: 1, gap: '8px' }} onClick={confirmRoleChange} disabled={roleChanging}>

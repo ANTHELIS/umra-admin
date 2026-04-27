@@ -46,6 +46,7 @@ const INITIAL_PACKAGES = [
 export default function PackageManagement() {
   const [packages, setPackages] = useState(INITIAL_PACKAGES);
   const [activeTab, setActiveTab] = useState("All");
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const toggleStatus = (id: number) => {
     setPackages(packages.map(pkg => 
@@ -54,9 +55,13 @@ export default function PackageManagement() {
   };
 
   const deletePackage = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this package?")) {
-      setPackages(packages.filter(pkg => pkg.id !== id));
-    }
+    setPendingDeleteId(id); // BUG 9 FIX: was window.confirm
+  };
+
+  const confirmDelete = () => {
+    if (pendingDeleteId === null) return;
+    setPackages(packages.filter(pkg => pkg.id !== pendingDeleteId));
+    setPendingDeleteId(null);
   };
 
   const filteredPackages = packages.filter(pkg => {
@@ -150,6 +155,22 @@ export default function PackageManagement() {
           </div>
         )}
       </div>
+
+      {/* BUG 9 FIX — Delete Confirmation Modal */}
+      {pendingDeleteId !== null && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div className="card" style={{ width: '360px', border: '1px solid var(--color-danger)', textAlign: 'center' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Delete Package?</h3>
+            <p className="muted-text" style={{ fontSize: '13px', marginBottom: '24px' }}>
+              This package will be permanently removed. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setPendingDeleteId(null)}>Keep Package</button>
+              <button className="btn-primary" style={{ flex: 1, background: 'var(--color-danger)' }} onClick={confirmDelete}>Delete Package</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

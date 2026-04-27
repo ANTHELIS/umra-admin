@@ -60,6 +60,7 @@ export default function Promotions() {
   }, []);
 
   useEffect(() => {
+    mountedRef.current = true;
     fetchOffers(); fetchBanners();
     return () => { mountedRef.current = false; };
   }, [fetchOffers, fetchBanners]);

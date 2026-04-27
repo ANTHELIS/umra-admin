@@ -59,18 +59,21 @@ export default function SignIn() {
     // Persist token + user info
     setToken(tokens.accessToken);
     if (typeof window !== 'undefined') {
+      const parsedName = user.name || user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Admin';
       localStorage.setItem('umrah_user', JSON.stringify({
         id:        user.id ?? user._id,
-        firstName: user.firstName,
-        lastName:  user.lastName,
+        firstName: user.firstName || (parsedName.split(' ')[0]),
+        lastName:  user.lastName || (parsedName.split(' ').slice(1).join(' ')),
         email:     user.email,
         role:      user.role,
-        fullName:  user.fullName ?? `${user.firstName} ${user.lastName}`,
+        fullName:  parsedName,
+        name:      parsedName,
       }));
       localStorage.setItem('umrah_role', role);
     }
 
-    showToast(`Welcome back, ${user.firstName}! 🌙`, 'success');
+    const welcomeName = user.name || user.firstName || 'Admin';
+    showToast(`Welcome back, ${welcomeName}! 🌙`, 'success');
     router.replace('/');
   };
 

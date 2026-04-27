@@ -45,7 +45,7 @@ export default function Commissions() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchConfig(); return () => { mountedRef.current = false; }; }, [fetchConfig]);
+  useEffect(() => { mountedRef.current = true; fetchConfig(); return () => { mountedRef.current = false; }; }, [fetchConfig]);
 
   const handleSaveConfigs = async () => {
     setSaving(true);

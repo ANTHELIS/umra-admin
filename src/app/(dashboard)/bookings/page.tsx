@@ -34,6 +34,7 @@ const INITIAL_BOOKINGS = [
 export default function BookingManagement() {
   const [bookings, setBookings] = useState(INITIAL_BOOKINGS);
   const [searchTerm, setSearchTerm] = useState("");
+  const [pendingRejectId, setPendingRejectId] = useState<number | null>(null);
 
   const handleApprove = (id: number) => {
     setBookings(bookings.map(b => 
@@ -42,9 +43,13 @@ export default function BookingManagement() {
   };
 
   const handleReject = (id: number) => {
-    if (window.confirm("Are you sure you want to cancel this booking?")) {
-      setBookings(bookings.filter(b => b.id !== id));
-    }
+    setPendingRejectId(id); // BUG 7 FIX: was window.confirm
+  };
+
+  const confirmReject = () => {
+    if (pendingRejectId === null) return;
+    setBookings(bookings.filter(b => b.id !== pendingRejectId));
+    setPendingRejectId(null);
   };
 
   const filteredBookings = bookings.filter(b => 
@@ -156,6 +161,22 @@ export default function BookingManagement() {
           </tbody>
         </table>
       </div>
+
+      {/* BUG 7 FIX — Reject Confirmation Modal (replaces window.confirm) */}
+      {pendingRejectId !== null && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div className="card" style={{ width: '360px', border: '1px solid var(--color-danger)', textAlign: 'center' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Cancel Booking?</h3>
+            <p className="muted-text" style={{ fontSize: '13px', marginBottom: '24px' }}>
+              This action cannot be undone. The booking will be permanently removed.
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setPendingRejectId(null)}>Keep Booking</button>
+              <button className="btn-primary" style={{ flex: 1, background: 'var(--color-danger)' }} onClick={confirmReject}>Cancel Booking</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

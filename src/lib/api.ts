@@ -67,7 +67,7 @@ export const fetchApi = async (endpoint: string, options: FetchOptions = {}) => 
     if (res.status === 401) {
       clearToken();
       showToast('Session expired. Please log in again.', 'error');
-      if (typeof window !== 'undefined') window.location.href = '/login';
+      if (typeof window !== 'undefined') window.location.href = '/auth/signin';
       return { data: null, error: 'Unauthorized' };
     }
     if (!res.ok) {
@@ -226,7 +226,7 @@ export const superAdminApi = {
     fetchApi('/super-admin/franchises'),
 
   approveFranchise: (id: string) =>
-    fetchApi(`/super-admin/franchises/${id}/approve`, { method: 'PATCH', body: '{}' }),
+    fetchApi(`/super-admin/franchises/${id}/approve`, { method: 'PATCH' }),
 
   updateFranchiseStatus: (id: string, status: FranchiseStatus) =>
     fetchApi(`/super-admin/franchises/${id}/status`, {
