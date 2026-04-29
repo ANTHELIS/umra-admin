@@ -95,6 +95,27 @@ export default function AuditLogs() {
           Showing 1 to 5 of 284 entries
         </div>
       </div>
+
+      {/* Mobile timeline card list — hidden on desktop via CSS */}
+      <div className={styles.mobileCardList}>
+        {logs.map((log, i) => (
+          <div key={log.id} className={styles.mobileCard}>
+            <div className={styles.mobileCardLeft}>
+              <div className={styles.avatar}>{log.user.charAt(0)}</div>
+              {i < logs.length - 1 && <div className={styles.mobileCardLine} />}
+            </div>
+            <div className={styles.mobileCardBody}>
+              <div className={styles.mobileCardAction}>{log.action}</div>
+              <div className={styles.mobileCardMeta}>{log.user} · {log.module}</div>
+              <div className={styles.mobileCardMeta}>{log.detail}</div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:'4px'}}>
+                <span style={{fontSize:'11px',color:'var(--color-muted)'}}>{log.time}</span>
+                <span className={`status-pill ${log.type === 'Critical' ? 'danger' : log.type === 'System' ? 'warning' : 'success'}`}>{log.type}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

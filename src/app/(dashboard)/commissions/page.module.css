@@ -5,18 +5,29 @@
   width: 100%;
 }
 
+/* ── Header ── */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-4);
 }
 
+/* ── Top commission grid (2 cards side by side) ── */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-6);
 }
 
+/* ── Loading skeleton grid ── */
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ── Section title inside card ── */
 .sectionTitle {
   font-size: 16px;
   font-weight: 600;
@@ -28,10 +39,15 @@
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
+/* ── Input group within cards ── */
 .inputGroup {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+.inputGroup + .inputGroup {
+  margin-top: 16px;
 }
 
 .inputGroup label {
@@ -40,39 +56,308 @@
   font-weight: 500;
 }
 
-.tierSection {
+/* ── System Config Table section ── */
+.configCard {
+  overflow-x: auto;
+}
+
+.configGroupLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.configTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.configTable th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.configTable td {
+  padding: 10px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: top;
+}
+
+.configKeyCell {
+  font-family: monospace;
+  color: var(--color-gold);
+  white-space: nowrap;
+}
+
+.configDescCell {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+/* Mobile config cards — hidden on desktop */
+.configMobileList {
+  display: none;
+}
+
+.configMobileItem {
   background: var(--bg-inner);
   border-radius: var(--radius-md);
-  padding: var(--space-4);
-  margin-bottom: var(--space-4);
   border: 1px solid rgba(255,255,255,0.05);
-}
-
-.tierTitle {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.tagsContainer {
+  padding: var(--space-3) var(--space-4);
   display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.configMobileKey {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--color-gold);
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.configMobileRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 12px;
+}
+
+.configMobileValue {
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.configMobileDesc {
+  color: var(--color-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* ── Saving Plan Tier Management ── */
+.tierCard {
+  /* no minWidth override here — handled per breakpoint */
+}
+
+.tierCardTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: 24px;
+}
+
+.tierGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.tierCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tierCol + .tierCol {
+  border-left: 1px solid rgba(255,255,255,0.08);
+  padding-left: 24px;
+}
+
+.tierColLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.5px;
+}
+
+.tierInputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tierInputBox {
+  background: #223D2C;
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.tierCurrency {
+  color: var(--color-gold);
+  font-weight: 600;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.tierInput {
+  background: transparent;
+  border: none;
+  color: var(--color-gold);
+  outline: none;
+  width: 100%;
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 0;
+}
+
+.tierRemoveBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-danger);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tierAddBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-gold);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  margin-top: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* ── Pool Rules ── */
+.poolRuleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.tag {
-  padding: 6px 16px;
-  background: rgba(201, 168, 76, 0.1);
-  border: 1px solid var(--border-gold-strong);
-  border-radius: 50px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-gold);
-  cursor: pointer;
-  transition: var(--transition-fast);
+.poolRuleLabel {
+  font-size: 14px;
+  color: var(--color-muted);
 }
 
-.tag:hover {
-  background: var(--color-gold);
-  color: var(--bg-page);
+.poolInput {
+  background: #0D2318;
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  color: var(--color-white);
+  padding: 8px 12px;
+  outline: none;
+  text-align: right;
+  width: 80px;
+  font-size: 14px;
+}
+
+.poolSelect {
+  background: #0D2318;
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  color: var(--color-white);
+  padding: 8px 12px;
+  outline: none;
+  font-size: 13px;
+  max-width: 100%;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .header > div {
+    flex: unset;
+    padding-right: 0;
+  }
+
+  .header button, .header a, .header .btn-primary, .header .btn-outline-gold {
+    padding: 10px;
+    font-size: 13px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Commission cards → single column */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Target nested cards to scale down padding */
+  .grid > div {
+    padding: 16px;
+  }
+
+  /* Skeleton → single column */
+  .skeletonGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Config table → hidden, mobile list shown */
+  .configTable {
+    display: none;
+  }
+
+  .configCard {
+    padding: 16px;
+  }
+
+  .configMobileList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .configMobileItem {
+    padding: 12px;
+  }
+
+  /* Tier grid → single column, remove dividers */
+  .tierGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .tierCol + .tierCol {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: var(--space-4);
+  }
+
+  .tierInputBox {
+    min-width: 0;
+  }
+
+  /* Pool select full-width */
+  .poolSelect {
+    width: 100%;
+  }
+
+  .poolInput {
+    width: 72px;
+  }
 }

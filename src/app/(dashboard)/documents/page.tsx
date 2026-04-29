@@ -53,6 +53,13 @@ export default function DocumentVerification() {
 
   return (
     <div className={styles.container}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '8px' }}>
+        <div>
+          <h1 className="page-title">Documents</h1>
+          <p className="muted-text">Review and verify uploaded customer documents</p>
+        </div>
+      </div>
+
       <div className={styles.statsRow}>
         <div className="card" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div className={styles.iconCircle} style={{ background: 'rgba(240, 165, 0, 0.15)', color: 'var(--color-warning)' }}>
@@ -149,6 +156,40 @@ export default function DocumentVerification() {
             </table>
           </div>
         </div>
+      </div>
+
+      {/* Mobile card list — hidden on desktop via CSS */}
+      <div className={styles.mobileCardList}>
+        {activeTab === 'Pending' ? documents.map(doc => (
+          <div key={doc.id} className={`card ${styles.mobileCard}`}>
+            <div className={styles.mobileCardTop}>
+              <div>
+                <div style={{fontWeight:600,fontSize:'14px',color:'var(--color-white)'}}>{doc.customer}</div>
+                <div style={{fontSize:'12px',color:'var(--color-gold)'}}>{doc.bookingId}</div>
+              </div>
+              <span className="status-pill warning">{doc.status}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Document</span>
+              <div className={styles.docType} style={{fontSize:'11px'}}>
+                <FileText size={12} className="gold-text" /><span>{doc.docType}</span>
+              </div>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Submitted</span>
+              <span style={{color:'var(--color-white)',display:'flex',alignItems:'center',gap:'4px'}}>
+                <Clock size={12} />{doc.submittedOn}
+              </span>
+            </div>
+            <div className={styles.mobileCardActions}>
+              <button className={styles.actionBtn} onClick={() => alert(`View ${doc.docType}`)}><Eye size={16} className="gold-text" /></button>
+              <button className={styles.actionBtn} onClick={() => handleApprove(doc.id)}><Check size={16} style={{color:'#2ECC71'}} /></button>
+              <button className={styles.actionBtn} onClick={() => handleReject(doc.id)}><X size={16} style={{color:'#E53935'}} /></button>
+            </div>
+          </div>
+        )) : (
+          <div style={{textAlign:'center',padding:'40px',color:'var(--color-muted)'}}>No {activeTab.toLowerCase()} documents found.</div>
+        )}
       </div>
 
       {/* BUG 8 FIX — Reject Confirmation Modal */}

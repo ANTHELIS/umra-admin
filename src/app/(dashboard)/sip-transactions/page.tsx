@@ -147,6 +147,40 @@ export default function SipTransactions() {
         </div>
       </div>
 
+      {/* Mobile card list — hidden on desktop via CSS */}
+      <div className={styles.mobileCardList}>
+        {MOCK_TX.map(tx => (
+          <div key={tx.id} className={`card ${styles.mobileCard}`}>
+            <div className={styles.mobileCardTop}>
+              <div>
+                <div style={{fontWeight:600,fontSize:'14px',color:'var(--color-white)'}}>{tx.name}</div>
+                <div style={{fontSize:'11px',color:'var(--color-muted)'}}>{tx.city} · {tx.franchise}</div>
+              </div>
+              <span className={`${styles.statusPill} ${styles[tx.status.toLowerCase()]}`}>{tx.status}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>TX ID</span><span style={{fontFamily:'monospace',color:'var(--color-gold)'}}>{tx.id}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Plan</span>
+              <span className={`${styles.typePill} ${styles[tx.type.toLowerCase()]}`}>{tx.type}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Amount</span><span style={{fontWeight:700,color:'var(--color-white)'}}>{tx.amount}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Method</span><span style={{color:'var(--color-muted)'}}>{tx.method}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Time</span><span style={{color:'var(--color-muted)',fontSize:'11px'}}>{tx.date}</span>
+            </div>
+            {tx.status === 'Failed' && (
+              <button className="btn-outline-warning" style={{width:'100%',marginTop:'4px',fontSize:'12px',height:'32px'}}>Retry Payment</button>
+            )}
+          </div>
+        ))}
+      </div>
+
       <div className={styles.alertCard}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div className={styles.alertIcon}><AlertCircle size={24} className="danger-text" /></div>

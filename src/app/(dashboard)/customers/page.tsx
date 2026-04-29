@@ -41,6 +41,16 @@ export default function CustomerManagement() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.header}>
+        <div>
+          <h1 className="page-title">Customers</h1>
+          <p className="muted-text">Manage all platform customers</p>
+        </div>
+        <button className="btn-primary">
+          + Add Customer
+        </button>
+      </div>
+
       <div className={styles.statsGrid}>
         <div className="card">
           <div className="page-subtitle">Total Customers</div>
@@ -136,6 +146,50 @@ export default function CustomerManagement() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile card list — hidden on desktop via CSS */}
+      <div className={styles.mobileCardList}>
+        {filteredCustomers.map(c => (
+          <div key={c.id} className={`card ${styles.mobileCard}`}>
+            <div className={styles.mobileCardTop}>
+              <div className={styles.mobileCustomerInfo}>
+                <div className={styles.avatarMini}>{c.avatar}</div>
+                <div>
+                  <div className={styles.mobileCustomerName}>{c.name}</div>
+                  <div className={styles.mobileCustomerEmail}>{c.email}</div>
+                </div>
+              </div>
+              <span className={`status-pill ${c.status === 'Active' ? 'success' : 'warning'}`}>{c.status}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Phone</span><span style={{color:'var(--color-white)'}}>{c.phone}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Package</span><span style={{color:'var(--color-white)'}}>{c.package}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Savings</span>
+              <div style={{display:'flex',alignItems:'center',gap:'6px'}}>
+                <div className={styles.progressBar} style={{width:'80px'}}>
+                  <div className={styles.progressFill} style={{width:`${c.savings}%`}} />
+                </div>
+                <span className="gold-text" style={{fontSize:'11px',fontWeight:700}}>{c.savings}%</span>
+              </div>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Referral Pts</span><span className="gold-text" style={{fontWeight:600}}>{c.points} pts</span>
+            </div>
+            <div className={styles.mobileCardActions}>
+              <button className={styles.iconBtn} onClick={() => alert(`View ${c.name}`)}><Eye size={16} className="gold-text" /></button>
+              <button className={styles.iconBtn} onClick={() => alert(`Edit ${c.name}`)}><Edit size={16} className="gold-text" /></button>
+              <button className={styles.iconBtn} onClick={() => alert(`Ban ${c.name}`)}><Ban size={16} style={{color:'#E53935'}} /></button>
+            </div>
+          </div>
+        ))}
+        {filteredCustomers.length === 0 && (
+          <div style={{textAlign:'center',padding:'40px',color:'var(--color-muted)'}}>No customers found matching "{searchTerm}"</div>
+        )}
       </div>
     </div>
   );

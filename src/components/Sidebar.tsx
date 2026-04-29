@@ -8,7 +8,7 @@ import {
   Grid, Briefcase, CalendarCheck, Users,
   FileCheck, Tag, Bell, LogOut, ShieldAlert,
   Building2, BarChart3, CreditCard, Landmark, Percent,
-  ClipboardList, Settings, PiggyBank, UsersRound, ArrowRightLeft
+  ClipboardList, Settings, PiggyBank, UsersRound, ArrowRightLeft, X
 } from 'lucide-react';
 import { clearToken, showToast } from '@/lib/api';
 import styles from './Sidebar.module.css';
@@ -87,7 +87,12 @@ const ROLE_LABELS: Record<string, string> = {
   super_admin: 'Super Admin',
 };
 
-export default function Sidebar() {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
+}
+
+export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
   const router   = useRouter();
 
@@ -110,6 +115,17 @@ export default function Sidebar() {
       }
     } catch {}
   }, []);
+
+  // Prevent body scroll when mobile drawer is open
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
 
   const isSuperAdmin = userRole === 'super_admin';
   const rawGroups = isSuperAdmin ? [...NAV_GROUPS, ...SUPER_ADMIN_GROUPS] : NAV_GROUPS;
@@ -134,8 +150,8 @@ export default function Sidebar() {
     router.replace('/auth/signin');
   };
 
-  return (
-    <aside className={styles.sidebar}>
+  const sidebarContent = (
+    <>
       <div className={styles.patternOverlay} />
 
       <div className={styles.topSection}>
@@ -180,6 +196,7 @@ export default function Sidebar() {
                     key={item.href}
                     href={item.href}
                     className={`${styles.navItem} ${isActive ? styles.active : ''}`}
+                    onClick={onMobileClose}
                   >
                     <item.icon size={18} />
                     <span>{item.name}</span>
@@ -209,6 +226,36 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* ── Desktop Sidebar (always visible on desktop) ── */}
+      <aside className={styles.sidebar}>
+        {sidebarContent}
+      </aside>
+
+      {/* ── Mobile Drawer Overlay (only on mobile) ── */}
+      {/* Backdrop */}
+      <div
+        className={`${styles.mobileOverlay} ${mobileOpen ? styles.mobileOverlayVisible : ''}`}
+        onClick={onMobileClose}
+        aria-hidden="true"
+      />
+
+      {/* Drawer panel */}
+      <aside className={`${styles.mobileDrawer} ${mobileOpen ? styles.mobileDrawerOpen : ''}`}>
+        {/* Close button inside drawer */}
+        <button
+          className={styles.drawerCloseBtn}
+          onClick={onMobileClose}
+          aria-label="Close menu"
+        >
+          <X size={20} />
+        </button>
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

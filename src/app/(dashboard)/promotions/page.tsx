@@ -102,6 +102,13 @@ export default function Promotions() {
 
   return (
     <div className={styles.container}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '8px' }}>
+        <div>
+          <h1 className="page-title">Promotions</h1>
+          <p className="muted-text">Manage referral programs, coupons, and banners</p>
+        </div>
+      </div>
+
       <div className={styles.grid}>
         {/* Left: Referral Program */}
         <div className={styles.leftCol}>
@@ -234,7 +241,7 @@ export default function Promotions() {
       </div>
 
       {/* Lists at the bottom */}
-      <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+      <div className={styles.listsGrid}>
         {/* Active Offers */}
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>

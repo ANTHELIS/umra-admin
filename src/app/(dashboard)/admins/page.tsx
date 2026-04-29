@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { ShieldAlert, ShieldCheck, Search, Plus, X, RefreshCw, AlertCircle } from 'lucide-react';
 import { superAdminApi, showToast } from '@/lib/api';
 import styles from './page.module.css';
@@ -69,38 +69,38 @@ export default function AdminManagement() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>
+        <div className={styles.headerText}>
           <h1 className="page-title">Admin Management</h1>
           <p className="muted-text">Oversee and configure system access across regional command centers.</p>
         </div>
-        <button className="btn-primary" onClick={() => setShowAddModal(true)} style={{ gap: '8px' }}>
+        <button className={`btn-primary ${styles.addBtn}`} onClick={() => setShowAddModal(true)}>
           <Plus size={18} /> Add New Admin
         </button>
       </div>
 
       <div className={styles.statsGrid}>
-        <div className="card">
-          <div className="muted-text" style={{ fontSize: '13px', textTransform: 'uppercase', marginBottom: '8px' }}>Total Admins</div>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-gold)' }}>{admins.length}</div>
+        <div className={`card ${styles.statCard}`}>
+          <div className={`muted-text ${styles.statLabel}`}>Total Admins</div>
+          <div className={`${styles.statValue} gold-text`}>{admins.length}</div>
         </div>
-        <div className="card">
-          <div className="muted-text" style={{ fontSize: '13px', textTransform: 'uppercase', marginBottom: '8px' }}>Active</div>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-success)' }}>
+        <div className={`card ${styles.statCard}`}>
+          <div className={`muted-text ${styles.statLabel}`}>Active</div>
+          <div className={styles.statValue} style={{ color: 'var(--color-success)' }}>
             {admins.filter((a) => a.status === 'Active').length}
           </div>
         </div>
-        <div className="card" style={{ border: '1px solid rgba(255, 68, 68, 0.3)' }}>
-          <div className="muted-text" style={{ fontSize: '13px', textTransform: 'uppercase', marginBottom: '8px' }}>Suspended</div>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-danger)' }}>
+        <div className={`card ${styles.statCard} ${styles.statCardDanger}`}>
+          <div className={`muted-text ${styles.statLabel}`}>Suspended</div>
+          <div className={styles.statValue} style={{ color: 'var(--color-danger)' }}>
             {admins.filter((a) => a.status === 'Suspended').length}
           </div>
         </div>
       </div>
 
-      <div className="card" style={{ padding: 0 }}>
-        <div style={{ padding: 'var(--space-4) var(--space-6)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className={`card ${styles.tableCard}`}>
+        <div className={styles.tableHeader}>
           <div className={styles.searchBox}>
-            <Search size={18} className="muted-text" />
+            <Search size={18} className="muted-text" style={{ flexShrink: 0 }} />
             <input
               type="text"
               placeholder="Search admins by name or email..."
@@ -123,7 +123,7 @@ export default function AdminManagement() {
           </thead>
           <tbody>
             {filteredAdmins.length === 0 && (
-              <tr><td colSpan={5} style={{ textAlign: 'center', padding: '32px' }}><span className="muted-text">No admins found.</span></td></tr>
+              <tr><td colSpan={5} className={styles.emptyState}><span className="muted-text">No admins found.</span></td></tr>
             )}
             {filteredAdmins.map((admin) => (
               <tr key={admin.id}>
@@ -165,43 +165,87 @@ export default function AdminManagement() {
         </table>
       </div>
 
+      {/* Mobile card list — hidden on desktop via CSS */}
+      <div className={styles.mobileCardList}>
+        {filteredAdmins.length === 0 && (
+          <div className={styles.emptyState}>No admins found.</div>
+        )}
+        {filteredAdmins.map((admin) => (
+          <div key={admin.id} className={`card ${styles.mobileCard}`}>
+            <div className={styles.mobileCardTop}>
+              <div className={styles.userCell}>
+                <div className={styles.avatar}>{admin.name.charAt(0)}</div>
+                <div style={{ minWidth: 0 }}>
+                  <div className={styles.userName}>{admin.name}</div>
+                  <div className={styles.userEmail}>{admin.email}</div>
+                </div>
+              </div>
+              <span className={`status-pill ${admin.status === 'Active' ? 'success' : 'danger'}`}>{admin.status}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Role</span>
+              <div className={styles.roleChip}>
+                {admin.role === 'super_admin' ? <ShieldAlert size={12} /> : <ShieldCheck size={12} />}
+                {ROLE_LABELS[admin.role] ?? admin.role}
+              </div>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Last Active</span><span style={{color:'var(--color-white)'}}>{admin.lastLogin}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Change Role</span>
+              <select
+                className={`input-field ${styles.mobileSelect}`}
+                value={admin.role}
+                onChange={(e) => setPendingRoleChange({ id: admin.id, role: e.target.value })}
+              >
+                <option value="admin">Admin</option>
+                <option value="super_admin">Super Admin</option>
+                <option value="user">User</option>
+                <option value="franchise">Franchise (External)</option>
+              </select>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Create Admin Modal */}
       {showAddModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
-          <div className="card" style={{ width: '420px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-gold)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 600 }}>Create New Admin</h2>
-              <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}><X size={20} /></button>
+        <div className={styles.modalOverlay}>
+          <div className={`card ${styles.modalCard}`}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>Create New Admin</h2>
+              <button onClick={() => setShowAddModal(false)} className={styles.modalCloseBtn}><X size={20} /></button>
             </div>
-            <form onSubmit={handleCreateAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ flex: 1 }}>
-                  <label className="muted-text" style={{ fontSize: '12px', marginBottom: '6px', display: 'block' }}>First Name</label>
+            <form onSubmit={handleCreateAdmin} className={styles.modalForm}>
+              <div className={styles.formRow}>
+                <div className={styles.formCol}>
+                  <label className={`muted-text ${styles.formLabel}`}>First Name</label>
                   <input required className="input-field" value={newAdmin.firstName} onChange={(e) => setNewAdmin({ ...newAdmin, firstName: e.target.value })} />
                 </div>
-                <div style={{ flex: 1 }}>
-                  <label className="muted-text" style={{ fontSize: '12px', marginBottom: '6px', display: 'block' }}>Last Name</label>
+                <div className={styles.formCol}>
+                  <label className={`muted-text ${styles.formLabel}`}>Last Name</label>
                   <input required className="input-field" value={newAdmin.lastName} onChange={(e) => setNewAdmin({ ...newAdmin, lastName: e.target.value })} />
                 </div>
               </div>
               <div>
-                <label className="muted-text" style={{ fontSize: '12px', marginBottom: '6px', display: 'block' }}>Email</label>
+                <label className={`muted-text ${styles.formLabel}`}>Email</label>
                 <input type="email" required className="input-field" value={newAdmin.email} onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })} />
               </div>
               <div>
-                <label className="muted-text" style={{ fontSize: '12px', marginBottom: '6px', display: 'block' }}>Phone</label>
+                <label className={`muted-text ${styles.formLabel}`}>Phone</label>
                 <input required className="input-field" value={newAdmin.phone} onChange={(e) => setNewAdmin({ ...newAdmin, phone: e.target.value })} />
               </div>
               <div>
-                <label className="muted-text" style={{ fontSize: '12px', marginBottom: '6px', display: 'block' }}>Password</label>
+                <label className={`muted-text ${styles.formLabel}`}>Password</label>
                 <input type="password" required minLength={8} className="input-field" value={newAdmin.password} onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })} />
               </div>
               {createError && (
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', color: 'var(--color-danger)', fontSize: '13px' }}>
+                <div className={styles.errorMsg}>
                   <AlertCircle size={14} /> {createError}
                 </div>
               )}
-              <button type="submit" className="btn-primary" style={{ marginTop: '8px', gap: '8px' }} disabled={creating}>
+              <button type="submit" className={`btn-primary ${styles.modalSubmitBtn}`} disabled={creating}>
                 {creating ? <><RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} /> Creating…</> : 'Create Admin'}
               </button>
             </form>
@@ -211,24 +255,23 @@ export default function AdminManagement() {
 
       {/* Role change confirmation modal */}
       {pendingRoleChange && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
-          <div className="card" style={{ width: '380px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-gold)', textAlign: 'center' }}>
+        <div className={styles.modalOverlay}>
+          <div className={`card ${styles.modalCard} ${styles.modalCenterText}`}>
             <ShieldAlert size={32} style={{ color: 'var(--color-warning)', margin: '0 auto 16px' }} />
-            <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Confirm Role Change</h3>
-            <p className="muted-text" style={{ fontSize: '13px', marginBottom: '16px' }}>
+            <h3 className={styles.modalConfirmTitle}>Confirm Role Change</h3>
+            <p className={`muted-text ${styles.modalConfirmDesc}`}>
               Change role to <strong style={{ color: 'var(--color-gold)' }}>{ROLE_LABELS[pendingRoleChange.role]}</strong>?<br />
               This will immediately affect access permissions.
             </p>
-            {/* BUG 6 FIX — warn when downgrading to non-admin role */}
             {(pendingRoleChange.role === 'franchise' || pendingRoleChange.role === 'user') && (
-              <p style={{ color: 'var(--color-danger)', fontSize: '12px', marginBottom: '16px', background: 'rgba(229,57,53,0.1)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(229,57,53,0.3)' }}>
+              <p className={styles.modalWarningBox}>
                 ⚠ This will <strong>remove admin panel access</strong> from this account.
                 {pendingRoleChange.role === 'franchise' && ' Franchise is an external business partner role.'}
               </p>
             )}
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setPendingRoleChange(null)} disabled={roleChanging}>Cancel</button>
-              <button className="btn-primary" style={{ flex: 1, gap: '8px' }} onClick={confirmRoleChange} disabled={roleChanging}>
+            <div className={styles.modalActionRow}>
+              <button className={`btn-secondary ${styles.modalBtn}`} onClick={() => setPendingRoleChange(null)} disabled={roleChanging}>Cancel</button>
+              <button className={`btn-primary ${styles.modalBtn}`} onClick={confirmRoleChange} disabled={roleChanging}>
                 {roleChanging ? <RefreshCw size={14} style={{ animation: 'spin 1s linear infinite' }} /> : null}
                 Confirm
               </button>

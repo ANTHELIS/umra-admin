@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Search, Bell, ChevronDown, LogOut, User } from 'lucide-react';
+import { Search, Bell, ChevronDown, LogOut, Menu } from 'lucide-react';
 import { checkHealth, clearToken, showToast } from '@/lib/api';
 import styles from './Header.module.css';
 
@@ -31,7 +31,11 @@ const ROLE_LABELS: Record<string, string> = {
   super_admin: 'Super Admin',
 };
 
-export default function Header() {
+interface HeaderProps {
+  onMobileMenuToggle?: () => void;
+}
+
+export default function Header({ onMobileMenuToggle }: HeaderProps) {
   const router   = useRouter();
   const pathname = usePathname();
 
@@ -95,8 +99,19 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.left}>
-        <h1 className={styles.title}>{title}</h1>
-        <span className={styles.breadcrumbs}>{breadcrumbs}</span>
+        {/* Hamburger — only visible on mobile */}
+        <button
+          className={styles.hamburgerBtn}
+          onClick={onMobileMenuToggle}
+          aria-label="Open navigation menu"
+        >
+          <Menu size={22} />
+        </button>
+
+        <div className={styles.titleBlock}>
+          <h1 className={styles.title}>{title}</h1>
+          <span className={styles.breadcrumbs}>{breadcrumbs}</span>
+        </div>
       </div>
 
       <div className={styles.center}>

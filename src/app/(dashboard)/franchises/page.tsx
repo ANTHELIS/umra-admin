@@ -78,39 +78,39 @@ export default function FranchiseManagement() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>
+        <div className={styles.headerText}>
           <h1 className="page-title">Franchise Management</h1>
           <p className="muted-text">Manage and monitor all franchise partners across regions.</p>
         </div>
-        <button className="btn-primary" onClick={fetchFranchises} disabled={loading} style={{ gap: '8px' }}>
+        <button className={`btn-primary ${styles.refreshBtn}`} onClick={fetchFranchises} disabled={loading}>
           <RefreshCw size={18} /> Refresh
         </button>
       </div>
 
       <div className={styles.statsGrid}>
         {[
-          { label: 'Total Franchises', val: totalCount, color: 'var(--color-gold)' },
-          { label: 'Pending Approval', val: pendingCount, color: 'var(--color-warning)' },
-          { label: 'Active', val: activeCount, color: 'var(--color-success)' },
-          { label: 'Suspended', val: suspendedCount, color: 'var(--color-danger)' },
-        ].map(({ label, val, color }) => (
-          <div className="card" key={label}>
-            <div className="muted-text" style={{ fontSize: '13px', textTransform: 'uppercase', marginBottom: '8px' }}>{label}</div>
-            <div style={{ fontSize: '32px', fontWeight: 700, color }}>{loading ? '—' : val}</div>
+          { label: 'Total Franchises', val: totalCount, colorClass: 'gold-text' },
+          { label: 'Pending Approval', val: pendingCount, colorClass: 'warning-text' },
+          { label: 'Active', val: activeCount, colorClass: 'success-text' },
+          { label: 'Suspended', val: suspendedCount, colorClass: 'danger-text', borderClass: styles.statCardDanger },
+        ].map(({ label, val, colorClass, borderClass }) => (
+          <div className={`card ${styles.statCard} ${borderClass || ''}`} key={label}>
+            <div className={`muted-text ${styles.statLabel}`}>{label}</div>
+            <div className={`${styles.statValue} ${colorClass}`}>{loading ? '—' : val}</div>
           </div>
         ))}
       </div>
 
       {loading && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div className={styles.loadingGrid}>
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="card" style={{ opacity: 0.4, minHeight: '120px' }} />
+            <div key={i} className={`card ${styles.skeletonCard}`} />
           ))}
         </div>
       )}
 
       {error && !loading && (
-        <div className="card" style={{ textAlign: 'center', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <div className={`card ${styles.errorCard}`}>
           <AlertCircle size={32} style={{ color: 'var(--color-danger)' }} />
           <p className="muted-text">{error}</p>
           <button className="btn-primary" onClick={fetchFranchises} style={{ gap: '8px' }}><RefreshCw size={16} /> Retry</button>
@@ -118,7 +118,7 @@ export default function FranchiseManagement() {
       )}
 
       {!loading && !error && franchises.length === 0 && (
-        <div className="card" style={{ textAlign: 'center', padding: '40px' }}>
+        <div className={`card ${styles.emptyCard}`}>
           <p className="muted-text">No franchise partners found.</p>
         </div>
       )}
@@ -136,32 +136,32 @@ export default function FranchiseManagement() {
                     className={`card ${styles.franchiseCard} ${isSelected ? styles.selectedCard : ''}`}
                     onClick={() => setSelectedFranchise(f)}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                      <div>
-                        <h3 style={{ fontSize: '16px', fontWeight: 600 }}>{f.name ?? f.businessName ?? 'Franchise'}</h3>
-                        <div className="muted-text" style={{ fontSize: '13px', marginTop: '4px' }}>{f.city ?? f.location ?? '—'}</div>
+                    <div className={styles.franchiseCardHeader}>
+                      <div style={{ minWidth: 0 }}>
+                        <h3 className={styles.franchiseName}>{f.name ?? f.businessName ?? 'Franchise'}</h3>
+                        <div className={`muted-text ${styles.franchiseLocation}`}>{f.city ?? f.location ?? '—'}</div>
                       </div>
                       <span className={`status-pill ${statusLower === 'active' ? 'success' : statusLower === 'suspended' ? 'danger' : 'warning'}`}>
                         {f.status ?? 'Pending'}
                       </span>
                     </div>
                     <div className={styles.metricsGrid}>
-                      <div>
-                        <div className="muted-text" style={{ fontSize: '11px', textTransform: 'uppercase' }}>Customers</div>
-                        <div style={{ fontSize: '15px', fontWeight: 600, marginTop: '4px' }}>{f.totalCustomers?.toLocaleString('en-IN') ?? '—'}</div>
+                      <div className={styles.metricBox}>
+                        <div className={`muted-text ${styles.metricLabel}`}>Customers</div>
+                        <div className={styles.metricValue}>{f.totalCustomers?.toLocaleString('en-IN') ?? '—'}</div>
                       </div>
-                      <div>
-                        <div className="muted-text" style={{ fontSize: '11px', textTransform: 'uppercase' }}>Bookings</div>
-                        <div style={{ fontSize: '15px', fontWeight: 600, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div className={styles.metricBox}>
+                        <div className={`muted-text ${styles.metricLabel}`}>Bookings</div>
+                        <div className={styles.metricValue}>
                           {f.totalBookings?.toLocaleString('en-IN') ?? '—'}
                           {f.totalBookings > 0 && <ArrowUpRight size={14} className="gold-text" />}
                         </div>
                       </div>
                     </div>
                     {f.totalCommission !== undefined && (
-                      <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                        <div className="muted-text" style={{ fontSize: '11px', textTransform: 'uppercase' }}>Commission Earned</div>
-                        <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-gold)', marginTop: '4px' }}>{formatINR(f.totalCommission)}</div>
+                      <div className={styles.commissionSection}>
+                        <div className={`muted-text ${styles.metricLabel}`}>Commission Earned</div>
+                        <div className={`${styles.commissionValue} gold-text`}>{formatINR(f.totalCommission)}</div>
                       </div>
                     )}
                   </div>
@@ -169,9 +169,8 @@ export default function FranchiseManagement() {
               })}
               <div className={`card ${styles.onboardCard}`}>
                 <div className={styles.iconCircle}><Plus size={24} className="gold-text" /></div>
-                <h3 style={{ fontSize: '16px', fontWeight: 600, marginTop: '16px' }}>Onboard New Partner</h3>
-                <p className="muted-text" style={{ fontSize: '13px', textAlign: 'center', marginTop: '8px' }}>
-                  {/* TODO: POST /super-admin/franchises once backend endpoint is available */}
+                <h3 className={styles.onboardTitle}>Onboard New Partner</h3>
+                <p className={`muted-text ${styles.onboardDesc}`}>
                   Send an invite link or manually create a franchise account.
                 </p>
               </div>
@@ -180,11 +179,11 @@ export default function FranchiseManagement() {
 
           {selectedFranchise && (
             <div className={styles.detailsSection}>
-              <div className="card" style={{ position: 'sticky', top: '24px' }}>
+              <div className={`card ${styles.detailsSidebarCard}`}>
                 <div className={styles.detailsHeader}>
-                  <div>
-                    <h2 style={{ fontSize: '20px', fontWeight: 700 }}>{selectedFranchise.name ?? selectedFranchise.businessName ?? 'Franchise'}</h2>
-                    <div className="muted-text" style={{ fontSize: '13px', marginTop: '4px' }}>ID: {getId(selectedFranchise) ?? 'N/A'}</div>
+                  <div style={{ minWidth: 0 }}>
+                    <h2 className={styles.detailsTitle}>{selectedFranchise.name ?? selectedFranchise.businessName ?? 'Franchise'}</h2>
+                    <div className={`muted-text ${styles.detailsId}`}>ID: {getId(selectedFranchise) ?? 'N/A'}</div>
                   </div>
                   <div className={styles.commissionBadge}>{selectedFranchise.commissionRate ? `${selectedFranchise.commissionRate}% Rate` : '15% Rate'}</div>
                 </div>
@@ -197,23 +196,23 @@ export default function FranchiseManagement() {
                   ].map(({ Icon, label, value }) => (
                     <div key={label} className={styles.infoRow}>
                       <div className={styles.infoIcon}><Icon size={16} /></div>
-                      <div>
-                        <div className="muted-text" style={{ fontSize: '12px' }}>{label}</div>
-                        <div style={{ fontSize: '14px', fontWeight: 500 }}>{value}</div>
+                      <div style={{ minWidth: 0 }}>
+                        <div className={`muted-text ${styles.infoLabel}`}>{label}</div>
+                        <div className={styles.infoValue}>{value}</div>
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className={styles.detailsFooter}>Approved by: {selectedFranchise.approvedBy ?? 'Pending'}</div>
-                <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-                  <button className="btn-primary" style={{ flex: 1, gap: '6px' }} onClick={handleApprove} disabled={actionLoading}>
+                <div className={styles.actionButtonsRow}>
+                  <button className={`btn-primary ${styles.actionBtn}`} onClick={handleApprove} disabled={actionLoading}>
                     <CheckCircle size={16} />{actionLoading ? 'Processing…' : 'Approve'}
                   </button>
-                  <button className="btn-outline-warning" style={{ flex: 1 }} onClick={handleToggleStatus} disabled={actionLoading}>
+                  <button className={`btn-outline-warning ${styles.actionBtn}`} onClick={handleToggleStatus} disabled={actionLoading}>
                     {(selectedFranchise.status ?? '').toLowerCase() === 'active' ? 'Suspend' : 'Activate'}
                   </button>
                 </div>
-                <button className="btn-secondary" style={{ width: '100%', marginTop: '12px' }}>Manage Permissions</button>
+                <button className={`btn-secondary ${styles.manageBtn}`}>Manage Permissions</button>
               </div>
             </div>
           )}

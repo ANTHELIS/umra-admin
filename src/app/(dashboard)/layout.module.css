@@ -5,7 +5,8 @@
 
 .mainWrapper {
   flex: 1;
-  margin-left: 260px; /* Width of the sidebar */
+  margin-left: 260px;
+  /* Width of the sidebar */
   display: flex;
   flex-direction: column;
 }
@@ -13,4 +14,17 @@
 .mainContent {
   flex: 1;
   padding: 24px;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .mainWrapper {
+    margin-left: 0;
+  }
+
+  .mainContent {
+    padding: 16px;
+    /* Bottom padding to clear the mobile bottom tab bar (64px) */
+    padding-bottom: 80px;
+  }
 }

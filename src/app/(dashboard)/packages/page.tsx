@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './page.module.css';
-import { Calendar, MapPin, Edit, Trash2 } from 'lucide-react';
+import { Calendar, MapPin, Edit, Trash2, Plus } from 'lucide-react';
 
 const INITIAL_PACKAGES = [
   {
@@ -75,11 +75,16 @@ export default function PackageManagement() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+        <div>
+          <h1 className="page-title">Packages</h1>
+          <p className="muted-text">Manage pilgrimage travel packages</p>
+        </div>
         <button 
           className="btn-primary"
           onClick={() => alert("Open Create Package Modal")}
         >
-          + Create New Package
+          <Plus size={16} style={{ marginRight: '8px' }} />
+          Create Package
         </button>
       </div>
 

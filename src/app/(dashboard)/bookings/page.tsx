@@ -162,6 +162,53 @@ export default function BookingManagement() {
         </table>
       </div>
 
+      {/* Mobile card list — hidden on desktop, shown on mobile via CSS */}
+      <div className={styles.mobileCardList}>
+        {filteredBookings.map((b) => (
+          <div key={b.id} className={`card ${styles.mobileCard}`}>
+            <div className={styles.mobileCardTop}>
+              <div>
+                <div className={styles.mobileCardId}>{b.bookingId}</div>
+                <div className={styles.mobileCardCustomer}>
+                  <div className={styles.avatarMini}>{b.initials}</div>
+                  <span>{b.customerName}</span>
+                </div>
+              </div>
+              <span className={`status-pill ${b.paymentStatus === 'Paid' ? 'success' : 'warning'}`}>
+                {b.paymentStatus}
+              </span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Package</span><span style={{color:'var(--color-white)'}}>{b.package}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Travel Date</span><span style={{color:'var(--color-white)'}}>{b.date}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Amount</span><span style={{color:'var(--color-gold)',fontWeight:700}}>{b.amount}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Docs</span>
+              <span className={`status-pill ${b.docStatus === 'Verified' ? 'success' : 'warning'}`}>
+                {b.docStatus}
+              </span>
+            </div>
+            <div className={styles.mobileCardActions}>
+              <button className={styles.iconBtn} onClick={() => alert(`Viewing ${b.bookingId}`)}><Eye size={16} className="gold-text" /></button>
+              {b.paymentStatus === 'Pending' && (
+                <>
+                  <button className={styles.iconBtn} onClick={() => handleApprove(b.id)}><Check size={16} style={{color:'#2ECC71'}} /></button>
+                  <button className={styles.iconBtn} onClick={() => handleReject(b.id)}><X size={16} style={{color:'#E53935'}} /></button>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+        {filteredBookings.length === 0 && (
+          <div style={{textAlign:'center',padding:'40px',color:'var(--color-muted)'}}>No bookings match your search.</div>
+        )}
+      </div>
+
       {/* BUG 7 FIX — Reject Confirmation Modal (replaces window.confirm) */}
       {pendingRejectId !== null && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import styles from './layout.module.css';
@@ -11,7 +11,14 @@ const ALLOWED_ROLES = ['admin', 'super_admin'];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [authorized, setAuthorized] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const token = getToken();
@@ -70,9 +77,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className={styles.container}>
-      <Sidebar />
+      <Sidebar
+        mobileOpen={mobileMenuOpen}
+        onMobileClose={() => setMobileMenuOpen(false)}
+      />
       <div className={styles.mainWrapper}>
-        <Header />
+        <Header onMobileMenuToggle={() => setMobileMenuOpen((prev) => !prev)} />
         <main className={styles.mainContent}>
           {children}
         </main>

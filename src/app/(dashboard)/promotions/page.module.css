@@ -100,3 +100,28 @@
   font-size: var(--text-sm);
   font-weight: 600;
 }
+
+.listsGrid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .listsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .tierInput {
+    height: 56px;
+    font-size: 20px !important;
+  }
+}

@@ -183,3 +183,32 @@
   align-self: flex-end;
   margin-top: 8px;
 }
+
+/* ── Mobile Responsive ── */
+.twoColGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .composerGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .previewSection {
+    padding-top: 16px;
+    display: none; /* Can be enabled if needed, but saving space on mobile Composer is better */
+  }
+
+  .channelOptions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .twoColGroup {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

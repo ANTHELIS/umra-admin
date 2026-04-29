@@ -520,3 +520,132 @@
   gap: 16px;
   background: #0D2318;
 }
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .header > div {
+    flex: 1;
+    padding-right: 8px;
+  }
+
+  .header button {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .statsRow {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+  
+  .statsRow > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .statCard {
+    padding: var(--space-3);
+    gap: 8px;
+  }
+
+  .statIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .statLabel {
+    font-size: 10px;
+    white-space: normal;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .statValue {
+    font-size: 16px;
+  }
+
+  .filterBar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .searchBox {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 38px;
+  }
+
+  .filterSelect {
+    width: 100%;
+    height: 36px;
+    font-size: 11px;
+    padding: 0 8px;
+  }
+
+  .resetLink {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 12px;
+  }
+
+  .table {
+    display: none;
+  }
+
+  /* Full-width drawer on mobile */
+  .drawer {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Mobile plan card — shown only on mobile */
+.mobileCardList {
+  display: none;
+}
+
+.mobileCard {
+  background: var(--bg-inner);
+  border-radius: 12px;
+  border: 1px solid rgba(201,168,76,0.12);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.mobileCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobileCardRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  padding-top: var(--space-2);
+}
+
+@media (max-width: 768px) {
+  .mobileCardList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}

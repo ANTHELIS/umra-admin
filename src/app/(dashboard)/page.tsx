@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './page.module.css';
-import { Users, Calendar, Briefcase, TrendingUp, RefreshCw } from 'lucide-react';
+import { Users, Calendar, Briefcase, TrendingUp, RefreshCw, Grid, CalendarCheck, Building2, BarChart3 } from 'lucide-react';
 import { superAdminApi, formatINR } from '@/lib/api';
 
 type Stats = {
@@ -13,9 +15,9 @@ type Stats = {
 };
 
 export default function Dashboard() {
-  const [stats,    setStats]    = useState<Stats | null>(null);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState<string | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string>('admin');
   const abortRef = useRef<AbortController | null>(null);
 
@@ -47,10 +49,10 @@ export default function Dashboard() {
     const d = res?.data ?? res;
     if (d && typeof d.totalUsers !== 'undefined') {
       setStats({
-        totalUsers:     Number(d.totalUsers)     || 0,
-        totalBookings:  Number(d.totalBookings)  || 0,
-        totalFranchises:Number(d.totalFranchises)|| 0,
-        totalRevenue:   Number(d.totalRevenue)   || 0,
+        totalUsers: Number(d.totalUsers) || 0,
+        totalBookings: Number(d.totalBookings) || 0,
+        totalFranchises: Number(d.totalFranchises) || 0,
+        totalRevenue: Number(d.totalRevenue) || 0,
       });
     } else {
       setError(res?.error ?? 'Failed to load analytics');
@@ -68,22 +70,31 @@ export default function Dashboard() {
     if (typeof window === 'undefined') return 'Admin';
     try {
       const raw = localStorage.getItem('umrah_user');
-      if (raw) { 
-        const u = JSON.parse(raw); 
-        return u.name || u.fullName || `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Admin'; 
+      if (raw) {
+        const u = JSON.parse(raw);
+        return u.name || u.fullName || `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Admin';
       }
-    } catch {}
+    } catch { }
     return 'Admin';
   })();
 
   const kpis = stats
     ? [
-        { title: 'Total Users', value: stats.totalUsers.toLocaleString('en-IN'), change: '+8% this month', icon: Users, isPositive: true },
-        { title: 'Total Bookings', value: stats.totalBookings.toLocaleString('en-IN'), change: '+12%', icon: Calendar, isPositive: true },
-        { title: 'Active Franchises', value: stats.totalFranchises.toLocaleString('en-IN'), change: '+3 new', icon: Briefcase, isPositive: true },
-        { title: 'Total Revenue', value: formatINR(stats.totalRevenue), change: '+18% YoY', icon: TrendingUp, isPositive: true },
-      ]
+      { title: 'Total Users', value: stats.totalUsers.toLocaleString('en-IN'), change: '+8% this month', icon: Users, isPositive: true },
+      { title: 'Total Bookings', value: stats.totalBookings.toLocaleString('en-IN'), change: '+12%', icon: Calendar, isPositive: true },
+      { title: 'Active Franchises', value: stats.totalFranchises.toLocaleString('en-IN'), change: '+3 new', icon: Briefcase, isPositive: true },
+      { title: 'Total Revenue', value: formatINR(stats.totalRevenue), change: '+18% YoY', icon: TrendingUp, isPositive: true },
+    ]
     : null;
+
+  // Mobile bottom tab items
+  const pathname = usePathname();
+  const MOBILE_TABS = [
+    { name: 'Dashboard', href: '/',          icon: Grid },
+    { name: 'Bookings',  href: '/bookings',  icon: CalendarCheck },
+    { name: 'Franchise', href: '/franchises',icon: Building2 },
+    { name: 'Finance',   href: '/reports',   icon: BarChart3 },
+  ];
 
   return (
     <div className={styles.container}>
@@ -178,39 +189,87 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className={styles.bottomRow}>
-        <div className="card" style={{ flex: 1 }}>
-          <div className={styles.cardHeader}>
-            <h3>Recent Bookings</h3>
-            <button className="gold-text">View All →</button>
+        <div className={styles.bottomRow}>
+          <div className="card" style={{ flex: 1 }}>
+            <div className={styles.cardHeader}>
+              <h3>Recent Bookings</h3>
+              <button className="gold-text">View All →</button>
+            </div>
+            {/* TODO: Connect to GET /bookings once backend endpoint is available */}
+
+            {/* Desktop table — hidden on mobile via CSS */}
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Customer</th>
+                  <th>Package</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="gold-text">#UT-2024-001</td>
+                  <td>Khalid Hassan</td>
+                  <td>Hajj Premium 2025</td>
+                  <td><span className="status-pill success">Confirmed</span></td>
+                </tr>
+                <tr>
+                  <td className="gold-text">#UT-2024-002</td>
+                  <td>Fatima Al-Zahra</td>
+                  <td>Umrah Economy</td>
+                  <td><span className="status-pill warning">Pending</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Mobile booking cards — only shown on mobile via CSS */}
+            <div className={styles.mobileBookingList}>
+              <div className={styles.mobileBookingCard}>
+                <div className={styles.mobileBookingTop}>
+                  <span className={`${styles.mobileBookingId} gold-text`}>#UT-2024-001</span>
+                  <span className="status-pill success">Confirmed</span>
+                </div>
+                <div className={styles.mobileBookingName}>Khalid Hassan</div>
+                <div className={styles.mobileBookingMeta}>
+                  <span>📅 Oct 24, 2024</span>
+                  <span>✈️ VIP Tier</span>
+                </div>
+              </div>
+
+              <div className={styles.mobileBookingCard}>
+                <div className={styles.mobileBookingTop}>
+                  <span className={`${styles.mobileBookingId} gold-text`}>#UT-2024-002</span>
+                  <span className="status-pill warning">Pending</span>
+                </div>
+                <div className={styles.mobileBookingName}>Fatima Al-Zahra</div>
+                <div className={styles.mobileBookingMeta}>
+                  <span>📅 Oct 25, 2024</span>
+                  <span>🕌 Standard</span>
+                </div>
+              </div>
+            </div>
           </div>
-          {/* TODO: Connect to GET /bookings once backend endpoint is available */}
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Booking ID</th>
-                <th>Customer</th>
-                <th>Package</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="gold-text">#UT-2024-001</td>
-                <td>Khalid Hassan</td>
-                <td>Hajj Premium 2025</td>
-                <td><span className="status-pill success">Confirmed</span></td>
-              </tr>
-              <tr>
-                <td className="gold-text">#UT-2024-002</td>
-                <td>Fatima Al-Zahra</td>
-                <td>Umrah Economy</td>
-                <td><span className="status-pill warning">Pending</span></td>
-              </tr>
-            </tbody>
-          </table>
         </div>
+
+        {/* Mobile Bottom Tab Navigation — hidden on desktop */}
+        <nav className={styles.mobileTabBar}>
+          {MOBILE_TABS.map((tab) => {
+            const isActive = tab.href === '/'
+              ? pathname === '/'
+              : pathname.startsWith(tab.href);
+            return (
+              <Link
+                key={tab.href}
+                href={tab.href}
+                className={`${styles.mobileTabItem} ${isActive ? styles.mobileTabActive : ''}`}
+              >
+                <tab.icon size={22} />
+                <span>{tab.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
-    </div>
   );
 }

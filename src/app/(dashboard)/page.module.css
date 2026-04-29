@@ -7,7 +7,7 @@
 
 .welcomeBanner {
   background: linear-gradient(135deg, #1E5C35, #0D2F1A);
-  border: 1px solid rgba(201,168,76,0.3);
+  border: 1px solid rgba(201, 168, 76, 0.3);
   border-radius: var(--radius-card);
   padding: var(--space-8) var(--space-10);
   position: relative;
@@ -60,7 +60,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  background: rgba(46,204,113,0.15);
+  background: rgba(46, 204, 113, 0.15);
   color: var(--color-success);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-btn);
@@ -96,7 +96,7 @@
 
 .kpiCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .kpiHeader {
@@ -200,9 +200,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: var(--radius-md);
-  border: 1px dashed rgba(255,255,255,0.1);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
 .donutPlaceholder {
@@ -250,7 +250,7 @@
 
 .table td {
   padding: var(--space-4);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: var(--text-sm);
   color: var(--color-white);
   vertical-align: middle;
@@ -261,5 +261,243 @@
 }
 
 .table tr:hover td {
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* =============================================
+   MOBILE RESPONSIVE STYLES (≤768px)
+   Desktop styles above remain 100% untouched
+   ============================================= */
+@media (max-width: 768px) {
+
+  /* ── Container ── */
+  .container {
+    gap: var(--space-4);
+  }
+
+  /* ── Welcome Banner ── */
+  .welcomeBanner {
+    padding: var(--space-5) var(--space-5);
+    border-radius: var(--radius-md);
+  }
+
+  .welcomeContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .welcomeLeft h2 {
+    font-size: var(--text-xl);
+    line-height: 1.3;
+  }
+
+  .welcomeLeft p {
+    font-size: var(--text-xs);
+  }
+
+  .welcomeRight {
+    gap: var(--space-2);
+  }
+
+  .dateText {
+    font-size: var(--text-xs);
+    color: rgba(201, 168, 76, 0.8);
+  }
+
+  /* ── KPI Grid: 2 columns on mobile ── */
+  .kpiRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .kpiCard {
+    padding: var(--space-4);
+    gap: var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  .kpiIconWrapper {
+    width: 34px;
+    height: 34px;
+  }
+
+  .kpiValue {
+    font-size: var(--text-xl);
+  }
+
+  .kpiTitle {
+    font-size: 10px;
+  }
+
+  /* ── Charts: stack vertically ── */
+  .chartsRow {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .chartCardLeft,
+  .chartCardRight {
+    flex: none;
+    width: 100%;
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .chartPlaceholder {
+    height: 180px;
+  }
+
+  .donutPlaceholder {
+    width: 110px;
+    height: 110px;
+    border-width: 12px;
+  }
+
+  .donutPlaceholder span {
+    font-size: var(--text-lg);
+  }
+
+  /* ── Bottom row: full width ── */
+  .bottomRow {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* ── Table → Card list on mobile ──
+     Hide the desktop table, show mobile cards instead */
+  .table {
+    display: none;
+  }
+
+  /* Card header compact */
+  .cardHeader {
+    margin-bottom: var(--space-4);
+  }
+
+  .cardHeader h3 {
+    font-size: var(--text-sm);
+  }
+
+  .tabs {
+    gap: 4px;
+  }
+}
+
+/* =============================================
+   MOBILE-ONLY COMPONENTS
+   (hidden on desktop, shown on mobile)
+   ============================================= */
+
+/* Mobile Booking Card List */
+.mobileBookingList {
+  display: none; /* Hidden on desktop */
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mobileBookingCard {
+  background: var(--bg-inner);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: var(--transition-base);
+}
+
+.mobileBookingCard:hover {
+  background: rgba(201, 168, 76, 0.05);
+}
+
+.mobileBookingTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobileBookingId {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.mobileBookingName {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.mobileBookingMeta {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+/* Mobile Bottom Tab Bar */
+.mobileTabBar {
+  display: none; /* Hidden on desktop */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--bg-sidebar);
+  border-top: 1px solid rgba(201, 168, 76, 0.2);
+  z-index: 200;
+  padding: 0 var(--space-2);
+  align-items: center;
+  justify-content: space-around;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.mobileTabItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  height: 100%;
+  color: var(--color-muted);
+  font-size: 10px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  padding: var(--space-2) 0;
+}
+
+.mobileTabItem:hover {
+  color: var(--color-white);
+}
+
+.mobileTabActive {
+  color: var(--color-gold) !important;
+  position: relative;
+}
+
+.mobileTabActive::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 2px;
+  background: var(--color-gold);
+  border-radius: 0 0 4px 4px;
+}
+
+/* Show mobile components on mobile */
+@media (max-width: 768px) {
+  .mobileBookingList {
+    display: flex;
+  }
+
+  .mobileTabBar {
+    display: flex;
+  }
 }

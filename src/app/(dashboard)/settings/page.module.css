@@ -84,3 +84,31 @@
 .toggleActive .toggleThumb {
   left: 22px;
 }
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .header > div {
+    flex: 1;
+    padding-right: 8px;
+  }
+
+  .header button, .header a, .header .btn-primary, .header .btn-outline-gold {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

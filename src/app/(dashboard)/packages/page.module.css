@@ -7,7 +7,8 @@
 
 .header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .filterTabs {
@@ -207,4 +208,87 @@
 .iconBtn:hover {
   background: var(--bg-sidebar);
   border-color: rgba(255,255,255,0.15);
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .header > div {
+    flex: 1;
+    padding-right: 8px;
+  }
+
+  .header button, .header a, .header .btn-primary, .header .btn-outline-gold {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+
+
+  .filterTabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    gap: 8px;
+    padding: 6px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .filterTabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab,
+  .tabActive {
+    flex: 0 0 auto;
+    text-align: center;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .cardImage {
+    height: 140px;
+  }
+
+  .cardBody {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .pkgName {
+    font-size: 16px;
+  }
+
+  .pkgPrice {
+    font-size: 20px;
+  }
+
+  .includesList {
+    gap: 6px;
+    margin: 8px 0;
+  }
+
+  .includeChip {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .cardFooter {
+    padding: 12px 16px;
+  }
 }

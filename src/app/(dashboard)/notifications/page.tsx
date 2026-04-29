@@ -55,6 +55,13 @@ export default function Notifications() {
 
   return (
     <div className={styles.container}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '8px' }}>
+        <div>
+          <h1 className="page-title">Notifications</h1>
+          <p className="muted-text">Compose and broadcast push notifications, SMS, or emails</p>
+        </div>
+      </div>
+
       <div className={styles.composerGrid}>
         {/* Left: Composer Form */}
         <div className="card">
@@ -102,7 +109,7 @@ export default function Notifications() {
           </div>
 
           {/* Category + Event — two columns */}
-          <div className={styles.formGroup} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div className={`${styles.formGroup} ${styles.twoColGroup}`}>
             <div>
               <label className={styles.label}>
                 Category <span style={{ color: 'var(--color-danger)' }}>*</span>

@@ -13,6 +13,12 @@
 
 .left {
   display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.titleBlock {
+  display: flex;
   align-items: baseline;
   gap: var(--space-3);
 }
@@ -149,4 +155,85 @@
 
 .chevron {
   color: var(--color-muted);
+}
+
+/* ── Hamburger Button (hidden on desktop) ── */
+.hamburgerBtn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  color: var(--color-white);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.hamburgerBtn:hover {
+  background: rgba(201, 168, 76, 0.1);
+  border-color: rgba(201, 168, 76, 0.4);
+  color: var(--color-gold);
+}
+
+.hamburgerBtn:active {
+  transform: scale(0.94);
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 var(--space-4);
+    height: 56px;
+  }
+
+  /* Show hamburger on mobile */
+  .hamburgerBtn {
+    display: flex;
+  }
+
+  /* Hide breadcrumbs on mobile to save space */
+  .breadcrumbs {
+    display: none;
+  }
+
+  /* Hide search bar on mobile */
+  .center {
+    display: none;
+  }
+
+  /* Hide the status pill text on mobile, keep dot */
+  .statusText {
+    display: none;
+  }
+
+  .statusPill {
+    padding: 6px 8px;
+  }
+
+  /* Compact right side */
+  .right {
+    gap: var(--space-3);
+  }
+
+  /* Hide dividers on mobile */
+  .divider {
+    display: none;
+  }
+
+  /* Hide username text on mobile, show only avatar */
+  .userName {
+    display: none;
+  }
+
+  .chevron {
+    display: none;
+  }
+
+  .title {
+    font-size: var(--text-base);
+  }
 }

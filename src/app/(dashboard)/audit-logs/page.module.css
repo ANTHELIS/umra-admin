@@ -79,3 +79,92 @@
   font-weight: 700;
   font-size: var(--text-xs);
 }
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .header > div {
+    flex: 1;
+    padding-right: 8px;
+  }
+
+  .header button, .header a, .header .btn-primary, .header .btn-outline-gold {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  .searchBox {
+    width: 100%;
+  }
+
+  .table {
+    display: none;
+  }
+}
+
+/* Mobile audit log card */
+.mobileCardList {
+  display: none;
+}
+
+.mobileCard {
+  background: var(--bg-inner);
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(201,168,76,0.08);
+  padding: var(--space-4);
+  display: flex;
+  gap: var(--space-3);
+}
+
+.mobileCardLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.mobileCardLine {
+  flex: 1;
+  width: 1px;
+  background: rgba(255,255,255,0.08);
+  min-height: 20px;
+}
+
+.mobileCardBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.mobileCardAction {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.mobileCardMeta {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+@media (max-width: 768px) {
+  .mobileCardList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}

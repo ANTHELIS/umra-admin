@@ -21,7 +21,6 @@ export default function Commissions() {
   const [saving, setSaving] = useState(false);
   const mountedRef = useRef(true);
 
-  // Local editable values for the known commission keys
   const [platformFee, setPlatformFee] = useState(5.0);
   const [franchiseRate, setFranchiseRate] = useState(15.0);
   const [referralReward, setReferralReward] = useState(500);
@@ -65,7 +64,6 @@ export default function Commissions() {
     else { showToast('Some configs failed to save. Check connection.', 'error'); }
   };
 
-  // Group configs by their group field for display
   const grouped = GROUP_ORDER.reduce<Record<string, ConfigEntry[]>>((acc, g) => {
     acc[g] = configs.filter((c) => c.group === g);
     return acc;
@@ -73,9 +71,11 @@ export default function Commissions() {
 
   return (
     <div className={styles.container}>
+
+      {/* ── Header ── */}
       <div className={styles.header}>
         <div>
-          <h1 className="page-title">Commission & Config</h1>
+          <h1 className="page-title">Commission &amp; Config</h1>
           <p className="muted-text">Configure platform-wide commission rates and system settings.</p>
         </div>
         <button className="btn-primary" onClick={handleSaveConfigs} disabled={saving} style={{ gap: '8px' }}>
@@ -84,12 +84,14 @@ export default function Commissions() {
         </button>
       </div>
 
+      {/* ── Loading skeleton ── */}
       {loading && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <div className={styles.skeletonGrid}>
           {[0, 1].map((i) => <div key={i} className="card" style={{ opacity: 0.4, minHeight: '120px' }} />)}
         </div>
       )}
 
+      {/* ── Error state ── */}
       {error && !loading && (
         <div className="card" style={{ textAlign: 'center', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
           <AlertCircle size={32} style={{ color: 'var(--color-danger)' }} />
@@ -100,6 +102,7 @@ export default function Commissions() {
 
       {!loading && !error && (
         <>
+          {/* ── Commission Rate Cards ── */}
           <div className={styles.grid}>
             <div className="card">
               <h2 className={styles.sectionTitle}><Percent size={18} className="gold-text" /> Platform Commissions</h2>
@@ -108,106 +111,129 @@ export default function Commissions() {
                 <input type="number" step="0.1" className="input-field" value={platformFee}
                   onChange={(e) => setPlatformFee(Number(e.target.value))} />
               </div>
-              <div className={styles.inputGroup} style={{ marginTop: '16px' }}>
+              <div className={styles.inputGroup}>
                 <label>Franchise Commission Rate (%)</label>
                 <input type="number" step="0.1" className="input-field" value={franchiseRate}
                   onChange={(e) => setFranchiseRate(Number(e.target.value))} />
               </div>
             </div>
+
             <div className="card">
-              <h2 className={styles.sectionTitle}><Award size={18} className="gold-text" /> Referral & Onboarding</h2>
+              <h2 className={styles.sectionTitle}><Award size={18} className="gold-text" /> Referral &amp; Onboarding</h2>
               <div className={styles.inputGroup}>
                 <label>Referral Reward (₹)</label>
                 <input type="number" className="input-field" value={referralReward}
                   onChange={(e) => setReferralReward(Number(e.target.value))} />
               </div>
-              <div className={styles.inputGroup} style={{ marginTop: '16px' }}>
+              <div className={styles.inputGroup}>
                 <label>Franchise Registration Fee (₹)</label>
                 <input type="number" className="input-field" value={registrationFee}
                   onChange={(e) => setRegistrationFee(Number(e.target.value))} />
-                <p className="muted-text" style={{ fontSize: '12px', marginTop: '4px' }}>One-time onboarding fee</p>
+                <p className="muted-text" style={{ fontSize: '12px' }}>One-time onboarding fee</p>
               </div>
             </div>
           </div>
 
-          {/* All Config Entries Grouped */}
+          {/* ── All Config Entries ── */}
           {configs.length > 0 && (
-            <div className="card" style={{ marginTop: '24px', overflowX: 'auto' }}>
+            <div className={`card ${styles.configCard}`}>
               <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '20px' }}>All System Config Entries</h3>
               {GROUP_ORDER.map((group) =>
                 grouped[group]?.length > 0 ? (
                   <div key={group} style={{ marginBottom: '24px' }}>
-                    <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--color-gold)', fontWeight: 700, letterSpacing: '1px', marginBottom: '10px' }}>
-                      {GROUP_LABELS[group]}
-                    </div>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div className={styles.configGroupLabel}>{GROUP_LABELS[group]}</div>
+
+                    {/* Desktop table */}
+                    <table className={styles.configTable}>
                       <thead>
                         <tr>
                           {['Key', 'Value', 'Description'].map((h) => (
-                            <th key={h} style={{ textAlign: 'left', padding: '8px 12px', fontSize: '11px', textTransform: 'uppercase', color: 'var(--color-muted)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{h}</th>
+                            <th key={h}>{h}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {grouped[group].map((c) => (
                           <tr key={c.key}>
-                            <td style={{ padding: '10px 12px', fontSize: '13px', fontFamily: 'monospace', color: 'var(--color-gold)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>{c.key}</td>
-                            <td style={{ padding: '10px 12px', fontSize: '13px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>{String(c.value)}</td>
-                            <td style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--color-muted)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>{c.description ?? '—'}</td>
+                            <td className={styles.configKeyCell}>{c.key}</td>
+                            <td>{String(c.value)}</td>
+                            <td className={styles.configDescCell}>{c.description ?? '—'}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
+
+                    {/* Mobile card list */}
+                    <div className={styles.configMobileList}>
+                      {grouped[group].map((c) => (
+                        <div key={c.key} className={styles.configMobileItem}>
+                          <div className={styles.configMobileKey}>{c.key}</div>
+                          <div className={styles.configMobileRow}>
+                            <span className="muted-text" style={{ fontSize: '11px' }}>Value</span>
+                            <span className={styles.configMobileValue}>{String(c.value)}</span>
+                          </div>
+                          {c.description && (
+                            <div className={styles.configMobileDesc}>{c.description}</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ) : null
               )}
             </div>
           )}
 
-          {/* Saving Plan Tiers */}
-          <div className="card" style={{ padding: '24px', border: '1px solid var(--border-gold)', borderRadius: '16px', overflowX: 'auto', marginTop: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'white', marginBottom: '24px' }}>Saving Plan Tier Management</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', minWidth: '600px' }}>
+          {/* ── Saving Plan Tier Management ── */}
+          <div className={`card ${styles.tierCard}`} style={{ border: '1px solid var(--border-gold)', borderRadius: '16px' }}>
+            <h3 className={styles.tierCardTitle}>Saving Plan Tier Management</h3>
+
+            <div className={styles.tierGrid}>
               {[
                 { label: 'Daily', amounts: [100, 200, 500] },
                 { label: 'Weekly', amounts: [1000, 2500, 5000] },
                 { label: 'Monthly', amounts: [5000, 10000, 25000] },
-              ].map(({ label, amounts }, i) => (
-                <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '12px', ...(i > 0 ? { borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: '24px' } : {}) }}>
-                  <div className="muted-text" style={{ fontSize: '12px', textTransform: 'uppercase', fontWeight: 600 }}>{label}</div>
+              ].map(({ label, amounts }) => (
+                <div key={label} className={styles.tierCol}>
+                  <div className={styles.tierColLabel}>{label}</div>
                   {amounts.map((amt) => (
-                    <div key={amt} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ background: '#223D2C', border: '1px solid var(--border-gold)', borderRadius: '8px', padding: '8px 12px', display: 'flex', alignItems: 'center', width: '120px' }}>
-                        <span className="gold-text" style={{ marginRight: '4px', fontWeight: 600 }}>₹</span>
-                        <input type="number" defaultValue={amt} style={{ background: 'transparent', border: 'none', color: 'var(--color-gold)', outline: 'none', width: '100%', fontWeight: 600 }} />
+                    <div key={amt} className={styles.tierInputRow}>
+                      <div className={styles.tierInputBox}>
+                        <span className={styles.tierCurrency}>₹</span>
+                        <input
+                          type="number"
+                          defaultValue={amt}
+                          className={styles.tierInput}
+                        />
                       </div>
-                      <button style={{ background: 'transparent', border: 'none', color: 'var(--color-danger)', cursor: 'pointer', padding: '4px', fontSize: '16px' }}>×</button>
+                      <button className={styles.tierRemoveBtn} aria-label="Remove tier">×</button>
                     </div>
                   ))}
-                  <button style={{ background: 'transparent', border: 'none', color: 'var(--color-gold)', fontSize: '13px', fontWeight: 600, textAlign: 'left', marginTop: '8px', cursor: 'pointer', display: 'flex', gap: '4px', alignItems: 'center' }}>
+                  <button className={styles.tierAddBtn}>
                     <Plus size={14} /> Add Tier
                   </button>
                 </div>
               ))}
             </div>
+
             <button className="btn-primary" style={{ width: '100%', marginTop: '24px' }}>Save Plan Config</button>
           </div>
 
-          {/* Pool Rules */}
-          <div className="card" style={{ padding: '24px', border: '1px solid var(--border-gold)', borderRadius: '16px', marginTop: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'white', marginBottom: '24px' }}>Saving Pool Rules</h3>
+          {/* ── Saving Pool Rules ── */}
+          <div className="card" style={{ border: '1px solid var(--border-gold)', borderRadius: '16px' }}>
+            <h3 className={styles.tierCardTitle}>Saving Pool Rules</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {[
-                { label: 'Max members per pool', control: <input type="number" defaultValue={100} style={{ background: '#0D2318', border: '1px solid var(--border-gold)', borderRadius: '8px', color: 'white', padding: '8px 12px', width: '80px', outline: 'none', textAlign: 'right' as const }} /> },
-              ].map(({ label, control }) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <div className="muted-text" style={{ fontSize: '14px' }}>{label}</div>
-                  {control}
-                </div>
-              ))}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                <div className="muted-text" style={{ fontSize: '14px' }}>Selection Criteria</div>
-                <select style={{ background: '#0D2318', border: '1px solid var(--border-gold)', borderRadius: '8px', color: 'white', padding: '8px 12px', outline: 'none' }}>
+              <div className={styles.poolRuleRow}>
+                <div className={styles.poolRuleLabel}>Max members per pool</div>
+                <input
+                  type="number"
+                  defaultValue={100}
+                  className={styles.poolInput}
+                />
+              </div>
+              <div className={styles.poolRuleRow}>
+                <div className={styles.poolRuleLabel}>Selection Criteria</div>
+                <select className={styles.poolSelect}>
                   <option>Completion + First-come-first-served</option>
                   <option>Completion + Random Draw</option>
                   <option>Admin Manual Select</option>

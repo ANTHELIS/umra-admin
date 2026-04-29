@@ -1,3 +1,5 @@
+/* ── Reports Page ── */
+
 .container {
   display: flex;
   flex-direction: column;
@@ -5,35 +7,200 @@
   width: 100%;
 }
 
+/* ── Header ── */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
+}
+
+.headerText {
+  flex: 1;
+  min-width: 0;
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: 12px;
+  flex-shrink: 0;
 }
 
+.periodSelect {
+  width: 150px;
+  height: 44px;
+}
+
+.exportBtn {
+  height: 44px;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* ── KPI Grid ── */
 .kpiGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
 }
 
+.kpiCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 .kpiHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.kpiLabel {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.kpiValue {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 4px 0 8px;
+  color: var(--color-white);
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.kpiChange {
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .iconCircle {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Chart Card ── */
+.chartCard {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartInner {
+  text-align: center;
+  color: var(--color-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.chartLabel {
+  margin: 0;
+  font-size: 14px;
+}
+
+.barChart {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  height: 120px;
+}
+
+.bar {
+  width: 32px;
+  border-radius: 4px 4px 0 0;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+
+  /* Header stacks vertically */
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  /* Actions become a 2-col grid */
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .periodSelect {
+    width: 100%;
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .exportBtn {
+    width: 100%;
+    height: 40px;
+    font-size: 12px;
+    justify-content: center;
+  }
+
+  /* KPI cards: single column stack */
+  .kpiGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .kpiCard {
+    padding: 16px;
+  }
+
+  .kpiLabel {
+    font-size: 11px;
+  }
+
+  .kpiValue {
+    font-size: 26px;
+    margin: 8px 0 6px;
+  }
+
+  .kpiChange {
+    font-size: 12px;
+  }
+
+  .iconCircle {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Chart area */
+  .chartCard {
+    min-height: 200px;
+  }
+
+  .barChart {
+    gap: 6px;
+    height: 80px;
+  }
+
+  .bar {
+    width: 20px;
+  }
+
+  .chartLabel {
+    font-size: 12px;
+  }
 }

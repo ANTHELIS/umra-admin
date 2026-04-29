@@ -1,3 +1,5 @@
+/* ── Franchises Page ── */
+
 .container {
   display: flex;
   flex-direction: column;
@@ -11,17 +13,81 @@
   align-items: center;
 }
 
+.headerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.refreshBtn {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Stats Grid ── */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-6);
 }
 
+.statCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.statCardDanger {
+  border: 1px solid rgba(255, 68, 68, 0.3) !important;
+}
+
+.statLabel {
+  font-size: 13px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statValue {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ── Status Loading & Empty ── */
+.loadingGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.skeletonCard {
+  opacity: 0.4;
+  min-height: 120px;
+}
+
+.errorCard, .emptyCard {
+  text-align: center;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── Main Layout ── */
 .mainContent {
   display: grid;
   grid-template-columns: 1fr 400px;
   gap: var(--space-6);
   align-items: start;
+}
+
+.listSection {
+  min-width: 0;
 }
 
 .gridCards {
@@ -30,10 +96,14 @@
   gap: var(--space-6);
 }
 
+/* ── Franchise Cards ── */
 .franchiseCard {
   cursor: pointer;
   border: 1px solid transparent;
   transition: var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .franchiseCard:hover {
@@ -46,6 +116,32 @@
   background: linear-gradient(180deg, rgba(201, 168, 76, 0.05) 0%, var(--bg-inner) 100%);
 }
 
+.franchiseCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.franchiseName {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.franchiseLocation {
+  font-size: 13px;
+  marginTop: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Metrics Grid ── */
 .metricsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -55,6 +151,42 @@
   border-radius: var(--radius-md);
 }
 
+.metricBox {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.metricLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metricValue {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.commissionSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.commissionValue {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* ── Onboard Card ── */
 .onboardCard {
   display: flex;
   flex-direction: column;
@@ -65,6 +197,8 @@
   cursor: pointer;
   transition: var(--transition-base);
   min-height: 220px;
+  padding: var(--space-4);
+  text-align: center;
 }
 
 .onboardCard:hover {
@@ -82,6 +216,28 @@
   justify-content: center;
 }
 
+.onboardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+.onboardDesc {
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* ── Details Sidebar (Sticky) ── */
+.detailsSection {
+  min-width: 0;
+}
+
+.detailsSidebarCard {
+  position: sticky;
+  top: 24px;
+}
+
 .detailsHeader {
   display: flex;
   justify-content: space-between;
@@ -89,6 +245,19 @@
   padding-bottom: var(--space-5);
   border-bottom: 1px solid rgba(255,255,255,0.05);
   margin-bottom: var(--space-5);
+  gap: 12px;
+}
+
+.detailsTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  word-break: break-word;
+}
+
+.detailsId {
+  font-size: 13px;
+  margin-top: 4px;
 }
 
 .commissionBadge {
@@ -98,6 +267,7 @@
   border-radius: 50px;
   font-size: 12px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .detailsBody {
@@ -110,6 +280,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  min-width: 0;
 }
 
 .infoIcon {
@@ -122,6 +293,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.infoLabel {
+  font-size: 12px;
+}
+
+.infoValue {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .detailsFooter {
@@ -130,4 +314,130 @@
   border-top: 1px solid rgba(255,255,255,0.05);
   font-size: 12px;
   color: var(--color-muted);
+}
+
+.actionButtonsRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.actionBtn {
+  flex: 1;
+  gap: 6px;
+  justify-content: center;
+  padding: 10px;
+}
+
+.manageBtn {
+  width: 100%;
+  margin-top: 12px;
+  justify-content: center;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .refreshBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  /* Stats grid fully stacked */
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .statCard {
+    padding: 16px;
+  }
+
+  .statLabel {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .statValue {
+    font-size: 26px;
+  }
+
+  .loadingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Main content reordered to show selected franchise at top */
+  .mainContent {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 16px;
+  }
+
+  .gridCards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Details Sidebar becomes static header content on mobile */
+  .detailsSidebarCard {
+    position: relative;
+    top: 0;
+    padding: 16px;
+  }
+
+  .detailsHeader {
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  .detailsTitle {
+    font-size: 18px;
+  }
+
+  .detailsBody {
+    gap: 16px;
+  }
+
+  .infoRow {
+    gap: 12px;
+  }
+
+  .actionButtonsRow {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .actionBtn {
+    height: 44px;
+  }
+
+  .manageBtn {
+    height: 44px;
+  }
+
+  .franchiseCard {
+    padding: 16px;
+  }
+
+  .franchiseName {
+    font-size: 15px;
+  }
+
+  .franchiseLocation {
+    font-size: 12px;
+  }
+
+  .onboardCard {
+    min-height: 180px;
+    padding: 16px;
+  }
 }

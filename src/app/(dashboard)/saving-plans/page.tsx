@@ -172,6 +172,45 @@ export default function SavingPlans() {
         </table>
       </div>
 
+      {/* Mobile card list — hidden on desktop via CSS */}
+      <div className={styles.mobileCardList}>
+        {plans.map(p => (
+          <div key={p.id} className={`card ${styles.mobileCard}`} onClick={() => setSelectedPlan(p)}>
+            <div className={styles.mobileCardTop}>
+              <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+                <div className={styles.avatar}>{p.name.charAt(0)}</div>
+                <div>
+                  <div style={{fontWeight:600,fontSize:'14px'}}>{p.name}</div>
+                  <div style={{fontSize:'11px',color:'var(--color-muted)'}}>{p.city} · {p.franchise}</div>
+                </div>
+              </div>
+              <span className={`${styles.statusPill} ${styles[p.status.toLowerCase()]}`}>{p.status}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Plan</span>
+              <span className={`${styles.typePill} ${styles[p.type.toLowerCase()]}`}>{p.type} · {p.freq}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Saved / Target</span>
+              <span style={{color:'var(--color-success)',fontWeight:600}}>{p.saved} / {p.target}</span>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Progress</span>
+              <div style={{display:'flex',alignItems:'center',gap:'6px'}}>
+                <div className={styles.progressTrack}>
+                  <div className={styles.progressFill} style={{width:`${p.progress}%`,background:p.progress===100?'var(--color-success)':'var(--color-gold)'}} />
+                </div>
+                <span style={{fontSize:'11px',fontWeight:700,color:p.progress===100?'var(--color-success)':'var(--color-gold)'}}>{p.progress}%</span>
+              </div>
+            </div>
+            <div className={styles.mobileCardRow}>
+              <span>Next Due</span>
+              <span style={{color:p.due==='Overdue'?'var(--color-danger)':p.due==='Tomorrow'?'var(--color-warning)':'var(--color-white)',fontWeight:600}}>{p.due}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Detail Drawer */}
       {selectedPlan && (
         <>

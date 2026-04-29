@@ -1,3 +1,5 @@
+/* ── Admins Page ── */
+
 .container {
   display: flex;
   flex-direction: column;
@@ -11,10 +13,60 @@
   align-items: center;
 }
 
+.headerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Stats Grid ── */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.statCardDanger {
+  border: 1px solid rgba(255, 68, 68, 0.3) !important;
+}
+
+.statLabel {
+  font-size: 13px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statValue {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ── Desktop Table ── */
+.tableCard {
+  padding: 0 !important;
+  overflow-x: auto;
+}
+
+.tableHeader {
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .searchBox {
@@ -27,6 +79,7 @@
   height: var(--space-12);
   padding: 0 var(--space-5);
   width: 400px;
+  max-width: 100%;
 }
 
 .searchInput {
@@ -36,6 +89,7 @@
   font-size: var(--text-sm);
   outline: none;
   width: 100%;
+  min-width: 0;
 }
 
 .searchInput::placeholder {
@@ -66,10 +120,17 @@
   border-bottom: none;
 }
 
+.emptyState {
+  text-align: center;
+  padding: 32px;
+}
+
+/* ── User Cell ── */
 .userCell {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 0;
 }
 
 .avatar {
@@ -84,17 +145,24 @@
   justify-content: center;
   font-weight: 700;
   font-size: var(--text-sm);
+  flex-shrink: 0;
 }
 
 .userName {
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .userEmail {
   font-size: 11px;
   color: var(--color-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .roleChip {
@@ -107,22 +175,233 @@
   border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
-.iconBtn {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--color-muted);
+/* ── Modals ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: var(--transition-fast);
+  z-index: 50;
+  padding: 16px;
 }
 
-.iconBtn:hover {
+.modalCard {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-gold) !important;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.formRow {
+  display: flex;
+  gap: 12px;
+}
+
+.formCol {
+  flex: 1;
+  min-width: 0;
+}
+
+.formLabel {
+  font-size: 12px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.errorMsg {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--color-danger);
+  font-size: 13px;
+}
+
+.modalSubmitBtn {
+  margin-top: 8px;
+  gap: 8px;
+  justify-content: center;
+}
+
+.modalCenterText {
+  text-align: center;
+  max-width: 380px;
+}
+
+.modalConfirmTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.modalConfirmDesc {
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.modalWarningBox {
+  color: var(--color-danger);
+  font-size: 12px;
+  margin-bottom: 16px;
+  background: rgba(229,57,53,0.1);
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(229,57,53,0.3);
+}
+
+.modalActionRow {
+  display: flex;
+  gap: 12px;
+}
+
+.modalBtn {
+  flex: 1;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* ── Mobile Card List ── */
+.mobileCardList {
+  display: none;
+}
+
+.mobileCard {
   background: var(--bg-inner);
-  color: var(--color-white);
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(201,168,76,0.12);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mobileCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobileCardRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  padding-top: var(--space-2);
+}
+
+.mobileSelect {
+  padding: 4px 8px !important;
+  height: 32px !important;
+  width: 140px !important;
+  font-size: 12px !important;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .addBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .statCard {
+    padding: 16px;
+  }
+
+  .statLabel {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .statValue {
+    font-size: 26px;
+  }
+
+  /* Desktop elements hidden */
+  .tableCard {
+    display: none;
+  }
+
+  .searchBox {
+    width: 100%;
+  }
+
+  /* Mobile elements shown */
+  .mobileCardList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mobileCard {
+    padding: 12px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .userName {
+    font-size: 13px;
+  }
+
+  .userEmail {
+    font-size: 10px;
+  }
+
+  /* Modal responsive */
+  .formRow {
+    flex-direction: column;
+    gap: 14px;
+  }
 }
