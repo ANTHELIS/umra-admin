@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { adminApi, setToken, showToast } from '@/lib/api';
@@ -81,10 +82,8 @@ export default function SignIn() {
     <div className={styles.authCard}>
       {/* Header */}
       <div className={styles.cardHeader}>
-        <div className={styles.logoMini}>
-          <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-          </svg>
+        <div style={{ marginBottom: '16px' }}>
+          <Image src="/logo.png" alt="Umrah Travel Logo" width={180} height={60} style={{ objectFit: 'contain' }} priority />
         </div>
         <h2 className={styles.title}>Umrah Travel</h2>
         <span className={styles.subtitle}>Admin &amp; Super Admin Panel</span>

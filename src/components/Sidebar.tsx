@@ -157,11 +157,11 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
       <div className={styles.topSection}>
         <div className={styles.logoContainer} style={{ display: 'flex', justifyContent: 'center' }}>
           <Image
-            src="/logo.png"
-            alt="Umrah Travel Logo"
-            width={140}
-            height={40}
-            style={{ objectFit: 'contain' }}
+            src="/sheen-text-logo.png"
+            alt="Sheen Travels Logo"
+            width={150}
+            height={200}
+            style={{ objectFit: 'contain', marginTop: '-60px', marginBottom: '-75px' }}
             priority
           />
         </div>
