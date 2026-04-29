@@ -61,7 +61,7 @@ export default function DocumentVerification() {
       </div>
 
       <div className={styles.statsRow}>
-        <div className="card" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className={`card ${styles.borderGold}`} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div className={styles.iconCircle} style={{ background: 'rgba(240, 165, 0, 0.15)', color: 'var(--color-warning)' }}>
             <FileClock size={24} />
           </div>
@@ -70,7 +70,7 @@ export default function DocumentVerification() {
             <div style={{ fontSize: '24px', fontWeight: 700 }}>45</div>
           </div>
         </div>
-        <div className="card" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className={`card ${styles.borderGreen}`} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div className={styles.iconCircle} style={{ background: 'rgba(46, 204, 113, 0.15)', color: 'var(--color-success)' }}>
             <FileCheck size={24} />
           </div>
@@ -79,7 +79,7 @@ export default function DocumentVerification() {
             <div style={{ fontSize: '24px', fontWeight: 700 }}>128</div>
           </div>
         </div>
-        <div className="card" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className={`card ${styles.borderRed}`} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div className={styles.iconCircle} style={{ background: 'rgba(229, 57, 53, 0.15)', color: 'var(--color-danger)' }}>
             <FileX size={24} />
           </div>

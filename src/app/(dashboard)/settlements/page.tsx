@@ -25,19 +25,19 @@ export default function Settlements() {
       </div>
 
       <div className={styles.statsGrid}>
-        <div className={`card ${styles.statCard}`}>
+        <div className={`card ${styles.statCard} ${styles.borderGold}`}>
           <div className={`muted-text ${styles.statLabel}`}>Total Due</div>
           <div className={`${styles.statValue} gold-text`}>₹4,35,000</div>
         </div>
-        <div className={`card ${styles.statCard}`}>
+        <div className={`card ${styles.statCard} ${styles.borderGreen}`}>
           <div className={`muted-text ${styles.statLabel}`}>Already Settled</div>
           <div className={styles.statValue} style={{ color: 'var(--color-success)' }}>₹3,84,00,000</div>
         </div>
-        <div className={`card ${styles.statCard} ${styles.statCardDanger}`}>
+        <div className={`card ${styles.statCard} ${styles.borderRed}`}>
           <div className={`muted-text ${styles.statLabel}`}>Overdue</div>
           <div className={styles.statValue} style={{ color: 'var(--color-danger)' }}>₹78,000</div>
         </div>
-        <div className={`card ${styles.statCard}`}>
+        <div className={`card ${styles.statCard} ${styles.borderWhite}`}>
           <div className={`muted-text ${styles.statLabel}`}>Next Payout Date</div>
           <div className={styles.statValue}>01 May 2025</div>
         </div>

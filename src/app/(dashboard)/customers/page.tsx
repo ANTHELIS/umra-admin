@@ -52,17 +52,17 @@ export default function CustomerManagement() {
       </div>
 
       <div className={styles.statsGrid}>
-        <div className="card">
+        <div className={`card ${styles.borderGold}`}>
           <div className="page-subtitle">Total Customers</div>
           <div style={{ fontSize: '32px', fontWeight: 700, margin: '8px 0', color: 'var(--color-white)' }}>4,821</div>
           <div className="status-pill success">+12% this month</div>
         </div>
-        <div className="card">
+        <div className={`card ${styles.borderGreen}`}>
           <div className="page-subtitle">Active Savers</div>
           <div style={{ fontSize: '32px', fontWeight: 700, margin: '8px 0', color: 'var(--color-white)' }}>1,204</div>
           <div className="status-pill warning">₹2.4M saved</div>
         </div>
-        <div className="card">
+        <div className={`card ${styles.borderWhite}`}>
           <div className="page-subtitle">Referral Points Issued</div>
           <div style={{ fontSize: '32px', fontWeight: 700, margin: '8px 0', color: 'var(--color-white)' }}>84,500</div>
           <div className="status-pill gold">240 Active Promoters</div>

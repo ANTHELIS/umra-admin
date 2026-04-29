@@ -26,7 +26,7 @@ export default function RevenueReports() {
       </div>
 
       <div className={styles.kpiGrid}>
-        <div className={`card ${styles.kpiCard}`}>
+        <div className={`card ${styles.kpiCard} ${styles.borderGreen}`}>
           <div className={styles.kpiHeader}>
             <div className={styles.kpiLabel}>Gross Volume (GMV)</div>
             <div className={styles.iconCircle} style={{ background: 'rgba(46, 204, 113, 0.15)', color: 'var(--color-success)' }}>
@@ -37,7 +37,7 @@ export default function RevenueReports() {
           <div className={styles.kpiChange} style={{ color: 'var(--color-success)' }}>+14.5% from last month</div>
         </div>
 
-        <div className={`card ${styles.kpiCard}`}>
+        <div className={`card ${styles.kpiCard} ${styles.borderGold}`}>
           <div className={styles.kpiHeader}>
             <div className={styles.kpiLabel}>Platform Revenue</div>
             <div className={styles.iconCircle} style={{ background: 'rgba(201, 168, 76, 0.15)', color: 'var(--color-gold)' }}>
@@ -48,7 +48,7 @@ export default function RevenueReports() {
           <div className={styles.kpiChange} style={{ color: 'var(--color-success)' }}>+8.2% from last month</div>
         </div>
 
-        <div className={`card ${styles.kpiCard}`}>
+        <div className={`card ${styles.kpiCard} ${styles.borderRed}`}>
           <div className={styles.kpiHeader}>
             <div className={styles.kpiLabel}>Pending Settlements</div>
             <div className={styles.iconCircle} style={{ background: 'rgba(240, 165, 0, 0.15)', color: 'var(--color-warning)' }}>

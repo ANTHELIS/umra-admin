@@ -17,6 +17,11 @@
   gap: var(--space-6);
 }
 
+.borderGold { border-left: 4px solid var(--color-gold); }
+.borderGreen { border-left: 4px solid var(--color-success); }
+.borderRed { border-left: 4px solid var(--color-danger); }
+.borderWhite { border-left: 4px solid var(--color-white); }
+
 .tableHeader {
   display: flex;
   align-items: center;

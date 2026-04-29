@@ -89,10 +89,10 @@ export default function FranchiseManagement() {
 
       <div className={styles.statsGrid}>
         {[
-          { label: 'Total Franchises', val: totalCount, colorClass: 'gold-text' },
-          { label: 'Pending Approval', val: pendingCount, colorClass: 'warning-text' },
-          { label: 'Active', val: activeCount, colorClass: 'success-text' },
-          { label: 'Suspended', val: suspendedCount, colorClass: 'danger-text', borderClass: styles.statCardDanger },
+          { label: 'Total Franchises', val: totalCount, colorClass: 'gold-text', borderClass: styles.borderGold },
+          { label: 'Pending Approval', val: pendingCount, colorClass: 'warning-text', borderClass: styles.borderGold },
+          { label: 'Active', val: activeCount, colorClass: 'success-text', borderClass: styles.borderGreen },
+          { label: 'Suspended', val: suspendedCount, colorClass: 'danger-text', borderClass: styles.borderRed },
         ].map(({ label, val, colorClass, borderClass }) => (
           <div className={`card ${styles.statCard} ${borderClass || ''}`} key={label}>
             <div className={`muted-text ${styles.statLabel}`}>{label}</div>

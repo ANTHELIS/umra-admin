@@ -18,42 +18,44 @@ export default function AuditLogs() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>
+        <div className={styles.headerText}>
           <h1 className="page-title">Audit Logs</h1>
           <p className="muted-text">Complete record of all platform actions and changes</p>
         </div>
-        <button className="btn-secondary">
+        <button className={`btn-secondary ${styles.exportBtn}`}>
           <Download size={18} style={{ marginRight: '8px' }} />
           Export Logs
         </button>
       </div>
 
       <div className={styles.statsGrid}>
-        <div className="card">
-          <div className="muted-text" style={{ fontSize: '13px', textTransform: 'uppercase', marginBottom: '8px' }}>Total Actions Today</div>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-gold)' }}>284</div>
+        <div className={`card ${styles.statCard} ${styles.borderGold}`}>
+          <div className={`muted-text ${styles.statLabel}`}>Total Actions Today</div>
+          <div className={`${styles.statValue} gold-text`}>284</div>
         </div>
-        <div className="card">
-          <div className="muted-text" style={{ fontSize: '13px', textTransform: 'uppercase', marginBottom: '8px' }}>Admin Actions</div>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-white)' }}>142</div>
+        <div className={`card ${styles.statCard} ${styles.borderWhite}`}>
+          <div className={`muted-text ${styles.statLabel}`}>Admin Actions</div>
+          <div className={styles.statValue}>142</div>
         </div>
-        <div className="card">
-          <div className="muted-text" style={{ fontSize: '13px', textTransform: 'uppercase', marginBottom: '8px' }}>Franchise Actions</div>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-success)' }}>89</div>
+        <div className={`card ${styles.statCard} ${styles.borderGreen}`}>
+          <div className={`muted-text ${styles.statLabel}`}>Franchise Actions</div>
+          <div className={styles.statValue} style={{ color: 'var(--color-success)' }}>89</div>
         </div>
-        <div className="card" style={{ border: '1px solid rgba(255, 68, 68, 0.3)' }}>
-          <div className="muted-text" style={{ fontSize: '13px', textTransform: 'uppercase', marginBottom: '8px' }}>Critical Actions</div>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-danger)' }}>12</div>
+        <div className={`card ${styles.statCard} ${styles.borderRed}`}>
+          <div className={`muted-text ${styles.statLabel}`}>Critical Actions</div>
+          <div className={styles.statValue} style={{ color: 'var(--color-danger)' }}>12</div>
         </div>
       </div>
 
-      <div className="card" style={{ padding: 0 }}>
-        <div style={{ padding: 'var(--space-4) var(--space-6)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+      <div className={`card ${styles.tableCard}`}>
+        <div className={styles.tableHeader}>
           <div className={styles.searchBox}>
-            <Search size={18} className="muted-text" />
+            <Search size={18} className="muted-text" style={{ flexShrink: 0 }} />
             <input type="text" placeholder="Search audit logs..." className={styles.searchInput} />
           </div>
-          <button className="btn-secondary" style={{ padding: '0 16px' }}><Filter size={16} style={{ marginRight: '8px' }} /> Filters</button>
+          <button className={`btn-secondary ${styles.filterBtn}`}>
+            <Filter size={16} style={{ marginRight: '8px' }} /> Filters
+          </button>
         </div>
         
         <table className={styles.table}>
@@ -70,17 +72,17 @@ export default function AuditLogs() {
             {logs.map(log => (
               <tr key={log.id}>
                 <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div className={styles.userCell}>
                     <div className={styles.avatar}>{log.user.charAt(0)}</div>
-                    <div style={{ fontWeight: 600, fontSize: '14px' }}>{log.user}</div>
+                    <div className={styles.userName}>{log.user}</div>
                   </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 500 }}>{log.action}</div>
-                  <div className="muted-text" style={{ fontSize: '12px', marginTop: '2px' }}>{log.detail}</div>
+                  <div className={styles.actionName}>{log.action}</div>
+                  <div className={`muted-text ${styles.actionDetail}`}>{log.detail}</div>
                 </td>
                 <td className="muted-text">{log.module}</td>
-                <td className="muted-text" style={{ fontSize: '13px' }}>{log.time}</td>
+                <td className={`muted-text ${styles.timeText}`}>{log.time}</td>
                 <td>
                   <span className={`status-pill ${log.type === 'Critical' ? 'danger' : log.type === 'System' ? 'warning' : 'success'}`}>
                     {log.type}
@@ -91,7 +93,7 @@ export default function AuditLogs() {
           </tbody>
         </table>
         
-        <div style={{ padding: 'var(--space-4) var(--space-6)', borderTop: '1px solid rgba(255,255,255,0.05)', fontSize: '12px', color: 'var(--color-muted)' }}>
+        <div className={styles.pagination}>
           Showing 1 to 5 of 284 entries
         </div>
       </div>
@@ -108,9 +110,11 @@ export default function AuditLogs() {
               <div className={styles.mobileCardAction}>{log.action}</div>
               <div className={styles.mobileCardMeta}>{log.user} · {log.module}</div>
               <div className={styles.mobileCardMeta}>{log.detail}</div>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:'4px'}}>
-                <span style={{fontSize:'11px',color:'var(--color-muted)'}}>{log.time}</span>
-                <span className={`status-pill ${log.type === 'Critical' ? 'danger' : log.type === 'System' ? 'warning' : 'success'}`}>{log.type}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                <span className={`status-pill ${log.type === 'Critical' ? 'danger' : log.type === 'System' ? 'warning' : 'success'}`} style={{ fontSize: '10px' }}>
+                  {log.type}
+                </span>
+                <span className="muted-text" style={{ fontSize: '11px' }}>{log.time}</span>
               </div>
             </div>
           </div>

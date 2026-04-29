@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldAlert, ShieldCheck, Search, Plus, X, RefreshCw, AlertCircle } from 'lucide-react';
 import { superAdminApi, showToast } from '@/lib/api';
 import styles from './page.module.css';
@@ -23,6 +23,19 @@ const ROLE_LABELS: Record<string, string> = {
 export default function AdminManagement() {
   const [admins, setAdmins] = useState<any[]>(INITIAL_ADMINS);
   const [search, setSearch] = useState('');
+  const [currentUserRole, setCurrentUserRole] = useState<string>('admin');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('umrah_user');
+        if (raw) {
+          const user = JSON.parse(raw);
+          setCurrentUserRole(user.role ?? 'admin');
+        }
+      } catch {}
+    }
+  }, []);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newAdmin, setNewAdmin] = useState({ firstName: '', lastName: '', email: '', phone: '', password: '' });
   const [creating, setCreating] = useState(false);
@@ -79,17 +92,17 @@ export default function AdminManagement() {
       </div>
 
       <div className={styles.statsGrid}>
-        <div className={`card ${styles.statCard}`}>
+        <div className={`card ${styles.statCard} ${styles.borderGold}`}>
           <div className={`muted-text ${styles.statLabel}`}>Total Admins</div>
           <div className={`${styles.statValue} gold-text`}>{admins.length}</div>
         </div>
-        <div className={`card ${styles.statCard}`}>
+        <div className={`card ${styles.statCard} ${styles.borderGreen}`}>
           <div className={`muted-text ${styles.statLabel}`}>Active</div>
           <div className={styles.statValue} style={{ color: 'var(--color-success)' }}>
             {admins.filter((a) => a.status === 'Active').length}
           </div>
         </div>
-        <div className={`card ${styles.statCard} ${styles.statCardDanger}`}>
+        <div className={`card ${styles.statCard} ${styles.borderRed}`}>
           <div className={`muted-text ${styles.statLabel}`}>Suspended</div>
           <div className={styles.statValue} style={{ color: 'var(--color-danger)' }}>
             {admins.filter((a) => a.status === 'Suspended').length}
@@ -153,10 +166,13 @@ export default function AdminManagement() {
                     value={admin.role}
                     onChange={(e) => setPendingRoleChange({ id: admin.id, role: e.target.value })}
                   >
-                    <option value="admin">Admin</option>
-                    <option value="super_admin">Super Admin</option>
+                    {currentUserRole === 'super_admin' && <option value="admin">Admin</option>}
+                    {currentUserRole === 'super_admin' && <option value="super_admin">Super Admin</option>}
                     <option value="user">User</option>
                     <option value="franchise">Franchise (External Partner)</option>
+                    {currentUserRole !== 'super_admin' && !['user', 'franchise'].includes(admin.role) && (
+                      <option value={admin.role} disabled>{ROLE_LABELS[admin.role] ?? admin.role}</option>
+                    )}
                   </select>
                 </td>
               </tr>
@@ -199,10 +215,13 @@ export default function AdminManagement() {
                 value={admin.role}
                 onChange={(e) => setPendingRoleChange({ id: admin.id, role: e.target.value })}
               >
-                <option value="admin">Admin</option>
-                <option value="super_admin">Super Admin</option>
+                {currentUserRole === 'super_admin' && <option value="admin">Admin</option>}
+                {currentUserRole === 'super_admin' && <option value="super_admin">Super Admin</option>}
                 <option value="user">User</option>
                 <option value="franchise">Franchise (External)</option>
+                {currentUserRole !== 'super_admin' && !['user', 'franchise'].includes(admin.role) && (
+                  <option value={admin.role} disabled>{ROLE_LABELS[admin.role] ?? admin.role}</option>
+                )}
               </select>
             </div>
           </div>
